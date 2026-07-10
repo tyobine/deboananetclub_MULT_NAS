@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Identificando Dispositivo...</title>
+</head>
+
+<body>
+    <script>
+        // O MikroTik injeta a variável real do hardware do cliente e devolve para o site
+        var macDispositivo = "$(mac)";
+        window.location.href = "https://deboananet.club/inicio?mac=" + encodeURIComponent(macDispositivo) + "&no_detect=1&router=fortaleza";
+    </script>
+</body>
+
+</html>
