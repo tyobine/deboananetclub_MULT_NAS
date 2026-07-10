@@ -1,3 +1,4 @@
+// view/admin/dashboard.php
 <?php include __DIR__ . '/header.php'; ?>
 
 <div class="container my-5">

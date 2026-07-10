@@ -1,3 +1,4 @@
+// view/admin/anuncio.php_check_syntax
 <?php
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/../../models/banco.php';
