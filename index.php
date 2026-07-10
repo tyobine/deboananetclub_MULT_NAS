@@ -135,9 +135,21 @@ switch ($url) {
         (new Anuncios())->editar_link();
         break;
 
-    // 🚀 AQUI ESTÁ A ROTA QUE FALTAVA PARA SALVAR O LOCAL!
     case 'admin/anuncio/salvar-local':
         (new Anuncios())->salvar_local();
+        break;
+
+    // === NOVAS ROTAS: GESTÃO DE PACOTES E DATAS ===
+    case 'admin/anuncio/renovar-anuncio':
+        (new Anuncios())->renovar_anuncio();
+        break;
+
+    case 'admin/anuncio/reativar-anuncio':
+        (new Anuncios())->reativar_anuncio();
+        break;
+
+    case 'admin/anuncio/editar-data-fim':
+        (new Anuncios())->editar_data_fim();
         break;
 
     // === RELATÓRIOS DO CRM ===
@@ -156,3 +168,4 @@ switch ($url) {
         header("Location: /inicio");
         exit;
 }
+?>
