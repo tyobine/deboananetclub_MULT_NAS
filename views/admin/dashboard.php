@@ -47,7 +47,7 @@
                     </div>
                     <div>
                         <h6 class="text-muted mb-1">Clientes Conectados</h6>
-                        <h3 class="fw-bold mb-0"><?= htmlspecialchars($clientesAtivos) ?> <small class="text-muted fs-6">toda rede</small></h3>
+                        <h3 class="fw-bold mb-0" id="clientes-ativos-valor"><span class="spinner-border spinner-border-sm text-warning" role="status"></span></h3>
                     </div>
                 </div>
             </div>
@@ -57,29 +57,21 @@
         <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-white p-3 h-100">
                 <h6 class="text-muted mb-2"><i class="fa-solid fa-server text-info"></i> Status Roteadores</h6>
-                <div class="d-flex flex-column gap-2">
-                    <?php foreach ($rotoresStatus as $nome => $status): ?>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="fw-bold"><?= VerificadorRoteadores::getNomeLegivel($nome) ?></small>
-                            <?php if ($status['online']): ?>
-                                <span class="badge bg-success"><i class="fa-solid fa-circle"></i> Online</span>
-                            <?php else: ?>
-                                <span class="badge bg-danger"><i class="fa-solid fa-circle"></i> Offline</span>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
+                <div class="d-flex flex-column gap-2" id="roteadores-status-lista">
+                    <div class="text-center text-muted small py-2">
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span> Consultando torres...
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Se houve erro na conexão de algum roteador -->
-    <?php if(!empty($_SESSION['alertas_dashboard'])): ?>
+    <!-- Área de Alerta de Erro de Roteadores via API -->
+    <div id="alertas-dashboard" style="display: none;">
         <div class="alert alert-danger shadow-sm">
-            <i class="fa-solid fa-triangle-exclamation"></i> <?= $_SESSION['alertas_dashboard'] ?>
-            <?php unset($_SESSION['alertas_dashboard']); ?>
+            <i class="fa-solid fa-triangle-exclamation"></i> <span id="alertas-texto"></span>
         </div>
-    <?php endif; ?>
+    </div>
 
     <!-- === SEGUNDA LINHA: Gráfico + Métricas de Anúncios === -->
     <div class="row g-4 mb-5">
@@ -162,6 +154,44 @@
                 }
             }
         }
+    });
+
+    // Função para carregar os status dos roteadores e clientes ativos assincronamente
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/admin/api/dashboard-status')
+            .then(response => response.json())
+            .then(data => {
+                // Atualiza Clientes Ativos
+                document.getElementById('clientes-ativos-valor').innerHTML = data.clientesAtivos + ' <small class="text-muted fs-6">toda rede</small>';
+                
+                // Atualiza Status dos Roteadores
+                let htmlStatus = '';
+                data.roteadoresStatus.forEach(function(rot) {
+                    let badge = rot.online 
+                        ? '<span class="badge bg-success"><i class="fa-solid fa-circle"></i> Online</span>' 
+                        : '<span class="badge bg-danger"><i class="fa-solid fa-circle"></i> Offline</span>';
+                    
+                    htmlStatus += `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="fw-bold">${rot.nome}</small>
+                            ${badge}
+                        </div>
+                    `;
+                });
+                
+                if(htmlStatus === '') htmlStatus = '<div class="text-muted small">Nenhum roteador cadastrado.</div>';
+                document.getElementById('roteadores-status-lista').innerHTML = htmlStatus;
+
+                // Mostra alertas se houver falhas de comunicação
+                if(data.erros && data.erros.length > 0) {
+                    document.getElementById('alertas-texto').innerText = "Falha ao consultar usuários ativos nos seguintes roteadores: " + data.erros.join(', ');
+                    document.getElementById('alertas-dashboard').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                document.getElementById('clientes-ativos-valor').innerHTML = '<span class="text-danger fs-5"><i class="fa-solid fa-circle-exclamation"></i> Erro</span>';
+                document.getElementById('roteadores-status-lista').innerHTML = '<div class="text-danger small">Falha ao carregar status.</div>';
+            });
     });
 </script>
 

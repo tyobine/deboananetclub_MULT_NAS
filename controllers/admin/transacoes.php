@@ -62,6 +62,10 @@ class Transacoes
             $transactions = $db->getAll($sql);
         }
 
+        require_once __DIR__ . '/../../models/Roteador.php';
+        $modeloRoteador = new Roteador();
+        $roteadores = $modeloRoteador->obterTodos();
+
         require_once __DIR__ . '/../../views/admin/transacoes.php';
     }
 }

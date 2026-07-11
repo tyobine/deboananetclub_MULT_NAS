@@ -4,6 +4,7 @@
 require_once __DIR__ . '/../models/banco.php';
 require_once __DIR__ . '/../models/MercadoPago.php';
 require_once __DIR__ . '/../models/mikrotik.php';
+require_once __DIR__ . '/../models/Roteador.php';
 require_once __DIR__ . '/../utils/rede.php'; // Utilitário de Rede
 
 class Hotspot
@@ -17,12 +18,15 @@ class Hotspot
         $ip_url = $_GET['ip'] ?? '';
 
         // CAPTURA MULTI-NAS ROUTER ID
+        $modeloRoteador = new Roteador();
+        $padraoRoteador = $modeloRoteador->obterPadrao();
+        
         $router_url = strtolower(trim($_GET['router'] ?? ''));
-        if (!empty($router_url) && array_key_exists($router_url, ROUTERS)) {
+        if (!empty($router_url) && $modeloRoteador->obterPorIdentificador($router_url)) {
             setcookie('router_id', $router_url, time() + (86400 * 30), "/");
             $router_id = $router_url;
         } else {
-            $router_id = $_COOKIE['router_id'] ?? ROUTER_DEFAULT;
+            $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
         }
 
         // 🛡️ CORREÇÃO TÉCNICA: Persistência do IP Local por Cookie (Evita quebra do Anti-Spoofing)
@@ -60,7 +64,8 @@ class Hotspot
         }
 
         if (empty($mac)) {
-            $mikrotikGateway = ROUTERS[$router_id]['hotspot_ip'] ?? ROUTERS[ROUTER_DEFAULT]['hotspot_ip'];
+            $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+            $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
             header("Location: http://{$mikrotikGateway}/login");
             exit;
         }
@@ -116,7 +121,9 @@ class Hotspot
         $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
         $ip = $_REQUEST['ip'] ?? '';
 
-        $router_id = $_COOKIE['router_id'] ?? ROUTER_DEFAULT;
+        $modeloRoteador = new Roteador();
+        $padraoRoteador = $modeloRoteador->obterPadrao();
+        $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
 
         if (empty($ip)) {
             $ip = $_COOKIE['ip_cliente'] ?? Rede::obterIpCliente();
@@ -134,7 +141,8 @@ class Hotspot
         }
 
         if (empty($mac)) {
-            $mikrotikGateway = ROUTERS[$router_id]['hotspot_ip'] ?? ROUTERS[ROUTER_DEFAULT]['hotspot_ip'];
+            $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+            $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
             header("Location: http://{$mikrotikGateway}/login");
             exit;
         }
@@ -205,7 +213,9 @@ class Hotspot
         $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
         $ip = $_REQUEST['ip'] ?? '';
 
-        $router_id = $_COOKIE['router_id'] ?? ROUTER_DEFAULT;
+        $modeloRoteador = new Roteador();
+        $padraoRoteador = $modeloRoteador->obterPadrao();
+        $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
 
         $whatsapp_raw = $_REQUEST['whatsapp'] ?? '';
         $whatsapp_numero = preg_replace('/[^0-9]/', '', $whatsapp_raw);
@@ -258,7 +268,8 @@ class Hotspot
                 $db->query("UPDATE acessos_pix SET status = 'ativo' WHERE txid = ?", [$txid_gratis]);
 
                 // 🚀 ADICIONADO: Pega o IP do roteador local para mandar para o JavaScript fazer o login
-                $mikrotikGateway = ROUTERS[$router_id]['hotspot_ip'] ?? ROUTERS[ROUTER_DEFAULT]['hotspot_ip'];
+                $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+                $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
 
                 echo json_encode([
                     'sucesso' => true,

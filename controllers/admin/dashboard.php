@@ -31,25 +31,10 @@ class Dashboard
         $faturamentoMes = ($mes['total'] ?? 0) / 100;
 
         // ------------------------------------------------------------------
-        // A MÁGICA DO MULTI-NAS: Somar utilizadores de TODOS os roteadores
+        // REMOVIDO PARA ASSINCRONICIDADE: 
+        // A contagem de clientes ativos e verificação de status agora é via API
         // ------------------------------------------------------------------
-        $clientesAtivos = 0;
-        $errosRoteadores = []; // Guarda roteadores que falharam na consulta
-
-        foreach (ROUTERS as $router_id => $config) {
-            try {
-                $mk = new Mikrotik($router_id);
-                $clientesAtivos += $mk->contarUtilizadoresAtivos();
-            } catch (\Throwable $th) {
-                // Registra o erro de forma que a View possa exibir um alerta ao Admin
-                $errosRoteadores[] = $config['name'] ?? "Roteador ID: $router_id";
-            }
-        }
-
-        // Passa a variável de erros para a sessão para que a View possa renderizar um alerta amigável
-        $_SESSION['alertas_dashboard'] = !empty($errosRoteadores) 
-            ? "Falha ao consultar usuários ativos nos seguintes roteadores: " . implode(', ', $errosRoteadores) 
-            : null;
+        $clientesAtivos = '...'; // Placeholder para o frontend
 
         $vendas7Dias = $db->getAll("SELECT DATE_FORMAT(a.expira_em, '%d/%m') as dia, SUM(p.price_cents) as total FROM acessos_pix a INNER JOIN planos p ON a.plano_id = p.id WHERE a.status IN ('ativo', 'expirado') AND a.status != 'pendente' AND a.expira_em >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(a.expira_em) ORDER BY a.expira_em ASC");
 
@@ -64,7 +49,8 @@ class Dashboard
         }
 
         // ========== STATUS DOS ROTEADORES ==========
-        $rotoresStatus = VerificadorRoteadores::statusTodos();
+        // A interface agora desenhará dinamicamente via JS
+        $rotoresStatus = [];
 
         // ========== MÉTRICAS DE ANÚNCIOS ==========
         $anunciosAtivos = $db->getRow(
@@ -91,6 +77,44 @@ class Dashboard
         );
 
         require_once __DIR__ . '/../../views/admin/dashboard.php';
+    }
+
+    public function apiStatus()
+    {
+        header('Content-Type: application/json');
+        $clientesAtivos = 0;
+        $errosRoteadores = [];
+
+        require_once __DIR__ . '/../../models/Roteador.php';
+        $modeloRoteador = new Roteador();
+        $roteadores = $modeloRoteador->obterTodos();
+
+        foreach ($roteadores as $config) {
+            $router_id = $config['nome_identificador'];
+            try {
+                $mk = new Mikrotik($router_id);
+                $clientesAtivos += $mk->contarUtilizadoresAtivos();
+            } catch (\Throwable $th) {
+                $errosRoteadores[] = mb_strtoupper($router_id);
+            }
+        }
+
+        $rotoresStatus = VerificadorRoteadores::statusTodos();
+
+        $dadosRoteadores = [];
+        foreach ($rotoresStatus as $nome => $status) {
+            $dadosRoteadores[] = [
+                'nome' => VerificadorRoteadores::getNomeLegivel($nome),
+                'online' => $status['online']
+            ];
+        }
+
+        echo json_encode([
+            'clientesAtivos' => $clientesAtivos,
+            'erros' => $errosRoteadores,
+            'roteadoresStatus' => $dadosRoteadores
+        ]);
+        exit;
     }
 }
 ?>

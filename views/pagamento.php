@@ -81,7 +81,11 @@
                         const destinoFinal = encodeURIComponent(`https://deboananet.club/inicio?mac=${data.mac}`);
 
                         // Resgata o gateway de hotspot que configuramos no config.php para esta cidade
-                        const mikrotikGateway = "<?php echo ROUTERS[$router_id]['hotspot_ip'] ?? ROUTERS[ROUTER_DEFAULT]['hotspot_ip']; ?>";
+                        <?php
+                            $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+                            $gatewayIp = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
+                        ?>
+                        const mikrotikGateway = "<?php echo $gatewayIp; ?>";
 
                         window.location.href = `http://${mikrotikGateway}/login?username=${mac}&password=${mac}&dst=${destinoFinal}`;
 

@@ -21,7 +21,9 @@ class Anuncios
         $anunciantes = $this->db->getAll("SELECT * FROM crm_anunciantes ORDER BY nome_empresa ASC");
         $anuncios = $this->db->getAll("SELECT * FROM crm_anuncios ORDER BY id DESC");
         
-        $locais = $this->db->getAll("SELECT * FROM crm_locais ORDER BY nome ASC");
+        require_once __DIR__ . '/../../models/Roteador.php';
+        $modeloRoteador = new Roteador();
+        $locais = $modeloRoteador->obterTodos();
         
         $midias_por_anunciante = [];
         foreach ($anuncios as $ad) {
@@ -33,16 +35,8 @@ class Anuncios
 
     public function salvar_local()
     {
-        $nome = strtolower(trim($_POST['nome_local'] ?? ''));
-        if (!empty($nome)) {
-            $existe = $this->db->getRow("SELECT id FROM crm_locais WHERE nome = ?", [$nome]);
-            if (!$existe) {
-                $this->db->query("INSERT INTO crm_locais (nome) VALUES (?)", [$nome]);
-            }
-            header("Location: /admin/anuncio?sucesso=local_salvo");
-        } else {
-            header("Location: /admin/anuncio?erro=nome_vazio");
-        }
+        // Esta função não é mais usada (os roteadores agora são gerenciados em /admin/roteadores)
+        header("Location: /admin/roteadores");
         exit;
     }
 
@@ -64,7 +58,9 @@ class Anuncios
     {
         $anunciante_id = (int)($_POST['anunciante_id'] ?? 0);
         $link_destino = trim($_POST['link_destino'] ?? '');
-        $localizacao = trim($_POST['localizacao'] ?? 'todos');
+        $locais_array = $_POST['localizacao'] ?? ['todos'];
+        $localizacao = is_array($locais_array) ? implode(',', $locais_array) : trim($locais_array);
+        if (empty($localizacao)) $localizacao = 'todos';
 
         if ($anunciante_id > 0 && isset($_FILES['arquivo_upload']) && $_FILES['arquivo_upload']['error'] === UPLOAD_ERR_OK) {
             
@@ -138,7 +134,9 @@ class Anuncios
     {
         $id = (int)($_POST['anuncio_id'] ?? 0);
         $novo_link = trim($_POST['link_destino'] ?? '');
-        $nova_localizacao = trim($_POST['localizacao'] ?? 'todos');
+        $locais_array = $_POST['localizacao'] ?? ['todos'];
+        $nova_localizacao = is_array($locais_array) ? implode(',', $locais_array) : trim($locais_array);
+        if (empty($nova_localizacao)) $nova_localizacao = 'todos';
         
         // Pega o valor recebido no input, aceitando decimais, e converte pra centavos para salvar no banco.
         $valor_float = (float)($_POST['valor_pacote'] ?? 0);

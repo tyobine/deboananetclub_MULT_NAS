@@ -30,7 +30,7 @@
                 $roteador_atual = isset($_GET['router']) ? strtolower(trim($_GET['router'])) : '';
 
                 // 2. Tenta buscar anúncios da torre atual OU anúncios globais ('todos')
-                $anuncios_ativos = $db_pub->getAll("SELECT id, tipo, caminho_arquivo, link_destino FROM crm_anuncios WHERE exibir = 'sim' AND (localizacao = ? OR localizacao = 'todos')", [$roteador_atual]);
+                $anuncios_ativos = $db_pub->getAll("SELECT id, tipo, caminho_arquivo, link_destino FROM crm_anuncios WHERE exibir = 'sim' AND (FIND_IN_SET(?, localizacao) > 0 OR localizacao = 'todos')", [$roteador_atual]);
 
                 // 3. FALLBACK SUPREMO: Se der vazio, ignora o filtro de local e puxa QUALQUER anúncio ligado!
                 // Isso evita o erro quando se testa o site sem o link completo do MikroTik
@@ -59,9 +59,12 @@
                 // =========================================================
                 ?>
 
-                <div class="mb-3 midia-box">
-                    <div id="loading-spinner" class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">A carregar...</span>
+                <div class="mb-3 midia-box text-center position-relative">
+                    <div id="loading-spinner" class="d-flex flex-column justify-content-center align-items-center py-5 w-100 h-100">
+                        <div class="spinner-grow text-primary mb-2" style="width: 3rem; height: 3rem;" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <h6 class="text-secondary fw-bold mb-0">Preparando o anúncio...</h6>
                     </div>
 
                     <a href="<?= $anuncio_id > 0 ? "/clique?id={$anuncio_id}" : $link_destino ?>" <?= $link_destino !== '#' ? 'target="_blank"' : 'onclick="return false;"' ?> style="display: block; width: 100%; text-decoration: none;">

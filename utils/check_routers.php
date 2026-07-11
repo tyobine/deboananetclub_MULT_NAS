@@ -35,10 +35,14 @@ class VerificadorRoteadores
      */
     public static function statusTodos()
     {
-        $routers = constant('ROUTERS');
+        require_once __DIR__ . '/../models/Roteador.php';
+        $modeloRoteador = new Roteador();
+        $routers = $modeloRoteador->obterTodos();
+
         $resultado = [];
 
-        foreach ($routers as $nome => $config) {
+        foreach ($routers as $config) {
+            $nome = $config['nome_identificador'];
             $resultado[$nome] = [
                 'host' => $config['host'],
                 'port' => $config['port'],

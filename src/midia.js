@@ -106,12 +106,20 @@
         var mediaCarregada = false;
         var eventoCarregamento = mediaElement.tagName === 'VIDEO' ? 'canplaythrough' : 'load';
 
-        mediaElement.addEventListener(eventoCarregamento, function () {
+        function onLoad() {
             if (!mediaCarregada) {
                 mediaCarregada = true;
                 iniciarCronometro();
             }
-        });
+        }
+
+        if (mediaElement.tagName !== 'VIDEO' && mediaElement.complete) {
+            onLoad();
+        } else if (mediaElement.tagName === 'VIDEO' && mediaElement.readyState >= 3) {
+            onLoad(); // readyState >= HAVE_FUTURE_DATA
+        } else {
+            mediaElement.addEventListener(eventoCarregamento, onLoad);
+        }
 
         setTimeout(function () {
             if (!mediaCarregada) {

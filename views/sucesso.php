@@ -4,8 +4,12 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../models/banco.php';
 
 $mac_cliente = $_GET['mac'] ?? $_COOKIE['mac_cliente'] ?? '';
-$router_id = $_COOKIE['router_id'] ?? ROUTER_DEFAULT;
-$mikrotikGateway = ROUTERS[$router_id]['hotspot_ip'] ?? ROUTERS[ROUTER_DEFAULT]['hotspot_ip'];
+require_once __DIR__ . '/../models/Roteador.php';
+$modeloRoteador = new Roteador();
+$padraoRoteador = $modeloRoteador->obterPadrao();
+$router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
+$rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+$mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
 
 $planName = 'Plano Ativo';
 $duration = '--';

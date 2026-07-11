@@ -20,6 +20,7 @@ require_once 'controllers/admin/dashboard.php';
 require_once 'controllers/admin/planos.php';
 require_once 'controllers/admin/anuncios.php'; 
 require_once 'controllers/admin/transacoes.php';
+require_once 'controllers/admin/roteadores.php';
 
 // ==========================================================================
 // 3. MOTOR DE ROTAS BLINDADO
@@ -89,6 +90,10 @@ switch ($url) {
         (new Dashboard())->index();
         break;
 
+    case 'admin/api/dashboard-status':
+        (new Dashboard())->apiStatus();
+        break;
+
     // === GESTÃO DE PLANOS ===
     case 'admin/plans':
         (new Planos())->index();
@@ -153,6 +158,19 @@ switch ($url) {
     case 'admin/transacoes':
     case 'admin/transactions':
         (new Transacoes())->index();
+        break;
+
+    // === GESTÃO DE ROTEADORES ===
+    case 'admin/roteadores':
+        (new RoteadoresController())->index();
+        break;
+    
+    case 'admin/roteadores/salvar':
+        (new RoteadoresController())->salvar();
+        break;
+
+    case 'admin/roteadores/deletar':
+        (new RoteadoresController())->deletar();
         break;
 
     default:

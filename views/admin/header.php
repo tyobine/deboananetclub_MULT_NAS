@@ -24,7 +24,7 @@ $uri = $_SERVER['REQUEST_URI'];
 
 <body>
 
-    <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
+    <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm sticky-top">
         <div class="container">
             <span class="navbar-brand text-white"><i class="fa-solid fa-wifi text-success"></i> Admin Hotspot</span>
             <div>
@@ -38,6 +38,10 @@ $uri = $_SERVER['REQUEST_URI'];
 
                 <a href="/admin/transactions" class="btn <?= strpos($uri, 'transactions') !== false ? 'btn-success' : 'btn-outline-light' ?> btn-sm me-1">
                     <i class="fa-solid fa-list-check"></i> Transações
+                </a>
+
+                <a href="/admin/roteadores" class="btn <?= strpos($uri, 'roteadores') !== false ? 'btn-success' : 'btn-outline-light' ?> btn-sm me-1">
+                    <i class="fa-solid fa-router"></i> Roteadores
                 </a>
 
                 <a href="/admin/anuncio" class="btn <?= (strpos($uri, 'anuncio') !== false && strpos($uri, 'relatorio') === false) ? 'btn-success' : 'btn-outline-light' ?> btn-sm me-1">

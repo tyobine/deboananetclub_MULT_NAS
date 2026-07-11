@@ -17,9 +17,9 @@
                     <label class="form-label small fw-bold text-muted">Filtrar por Cidade</label>
                     <select name="router" class="form-select">
                         <option value="">Todas as Cidades</option>
-                        <option value="sobral" <?= ($_GET['router'] ?? '') === 'sobral' ? 'selected' : '' ?>>Sobral</option>
-                        <option value="fortaleza" <?= ($_GET['router'] ?? '') === 'fortaleza' ? 'selected' : '' ?>>Fortaleza</option>
-                        <option value="matos" <?= ($_GET['router'] ?? '') === 'matos' ? 'selected' : '' ?>>Os Matos</option>
+                        <?php foreach ($roteadores as $rot): ?>
+                            <option value="<?= htmlspecialchars($rot['nome_identificador']) ?>" <?= ($_GET['router'] ?? '') === $rot['nome_identificador'] ? 'selected' : '' ?>><?= mb_strtoupper($rot['nome_identificador']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 

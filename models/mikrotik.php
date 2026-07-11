@@ -3,6 +3,8 @@
 
 require_once __DIR__ . '/../config/config.php';
 
+require_once __DIR__ . '/Roteador.php';
+
 class Mikrotik
 {
 
@@ -13,21 +15,24 @@ class Mikrotik
 
     public function __construct($router_id = null)
     {
-        // Multi-NAS: Pega do cookie ou usa o padrão
+        $modeloRoteador = new Roteador();
+        $padrao = $modeloRoteador->obterPadrao();
+        
         if (!$router_id) {
-            $router_id = $_COOKIE['router_id'] ?? ROUTER_DEFAULT;
+            $router_id = $_COOKIE['router_id'] ?? ($padrao['nome_identificador'] ?? '');
         }
 
-        if (!array_key_exists($router_id, ROUTERS)) {
-            $router_id = ROUTER_DEFAULT;
+        $config = $modeloRoteador->obterPorIdentificador($router_id);
+        if (!$config && $padrao) {
+            $config = $padrao;
         }
 
-        $config = ROUTERS[$router_id];
-        $this->ip   = $config['host'];
-        $this->user = $config['user'];
-        $this->pass = $config['pass'];
-        // Garante que a porta seja usada, ou força a 80 (ou 443) como no seu original
-        $this->port = $config['port'] ?? '80';
+        if ($config) {
+            $this->ip   = $config['host'];
+            $this->user = $config['user'];
+            $this->pass = $config['pass'];
+            $this->port = $config['port'] ?? '80';
+        }
     }
 
     private function requestREST($endpoint, $method = 'GET', $data = null)

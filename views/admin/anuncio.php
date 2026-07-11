@@ -67,15 +67,19 @@ $db_metricas = new Banco();
                         </div>
 
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <label class="form-label small fw-bold mb-0">Roteador / Localização</label>
-                                <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none fw-bold" onclick="abrirModalLocal()"><i class="fa-solid fa-plus"></i> Novo</button>
-                            </div>
-                            <select name="localizacao" class="form-select" required>
+                            <label class="form-label small fw-bold mb-1">Roteadores / Localização</label>
+                            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto; background: #f8f9fa;">
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="checkbox" name="localizacao[]" value="todos" id="loc_todos_novo" checked>
+                                    <label class="form-check-label small fw-bold text-success" for="loc_todos_novo">GLOBAL (Todos os Roteadores)</label>
+                                </div>
                                 <?php foreach ($locais as $loc): ?>
-                                    <option value="<?= htmlspecialchars($loc['nome']) ?>"><?= mb_strtoupper($loc['nome']) ?></option>
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" name="localizacao[]" value="<?= htmlspecialchars($loc['nome_identificador']) ?>" id="loc_new_<?= $loc['id'] ?>">
+                                        <label class="form-check-label small" for="loc_new_<?= $loc['id'] ?>"><?= mb_strtoupper($loc['nome_identificador']) ?></label>
+                                    </div>
                                 <?php endforeach; ?>
-                            </select>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -177,29 +181,7 @@ $db_metricas = new Banco();
     </div>
 </div>
 
-<!-- MODAL: Novo Local -->
-<div class="modal fade" id="modalNovoLocal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <form action="/admin/anuncio/salvar-local" method="POST">
-        <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold"><i class="fa-solid fa-location-dot text-primary"></i> Cadastrar Novo Roteador</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-4">
-          <div class="mb-3">
-            <label class="form-label small fw-bold">Palavra Exata no MikroTik (ex: fortaleza)</label>
-            <input type="text" name="nome_local" class="form-control form-control-lg" placeholder="Digite em letras minúsculas" required>
-          </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary fw-bold px-4">Salvar Roteador</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<!-- MODAL NOVO LOCAL REMOVIDO: AGORA É GERENCIADO EM /admin/roteadores -->
 
 <!-- MODAL: Editar Anúncio (Link, Local e VALOR PAGO) -->
 <div class="modal fade" id="modalEditarAnuncio" tabindex="-1">
@@ -214,12 +196,19 @@ $db_metricas = new Banco();
           <input type="hidden" name="anuncio_id" id="edit_anuncio_id">
           
           <div class="mb-3">
-            <label class="form-label small fw-bold">Localização / Roteador</label>
-            <select name="localizacao" id="edit_localizacao" class="form-select">
+            <label class="form-label small fw-bold">Localização / Roteadores</label>
+            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto; background: #f8f9fa;">
+                <div class="form-check mb-1">
+                    <input class="form-check-input edit-loc-checkbox" type="checkbox" name="localizacao[]" value="todos" id="edit_loc_todos">
+                    <label class="form-check-label small fw-bold text-success" for="edit_loc_todos">GLOBAL (Todos os Roteadores)</label>
+                </div>
                 <?php foreach ($locais as $loc): ?>
-                    <option value="<?= htmlspecialchars($loc['nome']) ?>"><?= mb_strtoupper($loc['nome']) ?></option>
+                    <div class="form-check mb-0">
+                        <input class="form-check-input edit-loc-checkbox" type="checkbox" name="localizacao[]" value="<?= htmlspecialchars($loc['nome_identificador']) ?>" id="edit_loc_<?= $loc['id'] ?>">
+                        <label class="form-check-label small" for="edit_loc_<?= $loc['id'] ?>"><?= mb_strtoupper($loc['nome_identificador']) ?></label>
+                    </div>
                 <?php endforeach; ?>
-            </select>
+            </div>
           </div>
 
           <div class="mb-3">
@@ -279,8 +268,14 @@ function abrirModalLocal() {
 function abrirModalEditar(id, linkAtual, localAtual, valorAtual) {
     document.getElementById('edit_anuncio_id').value = id;
     document.getElementById('edit_link_destino').value = linkAtual;
-    document.getElementById('edit_localizacao').value = localAtual;
     document.getElementById('edit_valor_pacote').value = valorAtual;
+    
+    let locaisArr = localAtual.split(',');
+    let checkboxes = document.querySelectorAll('.edit-loc-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = locaisArr.includes(cb.value);
+    });
+
     new bootstrap.Modal(document.getElementById('modalEditarAnuncio')).show();
 }
 

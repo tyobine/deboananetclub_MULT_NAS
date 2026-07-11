@@ -12,48 +12,7 @@ define('DB_NAME', 'moveisjb_database');
 define('DB_USER', 'moveisjb_hotspot_db');
 define('DB_PASS', 'vtgd65aoty');
 
-// =========================================================================
-// 2. CONFIGURAÇÕES DOS ROTEADORES MIKROTIK (Multi-NAS Misto)
-// =========================================================================
-define('ROUTER_DEFAULT', 'sobral');
-
-define('ROUTERS', [
-    // 1. SOBRAL (Borda com IP Público Próprio)
-    'sobral' => [
-        'host'       => 'api.deboananet.club', // IP Público de Sobral
-        'user'       => 'admin',
-        'pass'       => 'xtz900af',
-        'port'       => '8080',                // Porta local da API em Sobral
-        'hotspot_ip' => '10.50.0.1'            // COLOQUE O IP DO HOTSPOT DE SOBRAL
-    ],
-
-    /*/ 2. MATOS (Sem IP Público - Usa VPN passando por Sobral)
-    'matos' => [
-        'host'       => '',                    // O site bate na Borda (Sobral)
-        'user'       => 'mulato',              // Usuário da RB dos Matos
-        'pass'       => 'vtgd65aoty',          // Senha da RB dos Matos
-        'port'       => '8083',                // A Borda recebe na 8081 e joga pro túnel VPN dos Matos
-        'hotspot_ip' => '10.50.0.1'            // COLOQUE O IP DO HOTSPOT DOS MATOS
-    ],
-
-    // 2. mulato (Sem IP Público - Usa VPN passando por Sobral)
-    'mulato' => [
-        'host'       => '',                    // O site bate na Borda (Sobral)
-        'user'       => 'mulato',              // Usuário da RB dos Matos
-        'pass'       => 'vtgd65aoty',          // Senha da RB dos Matos
-        'port'       => '8083',                // A Borda recebe na 8081 e joga pro túnel VPN dos Matos
-        'hotspot_ip' => '10.50.0.1'            // COLOQUE O IP DO HOTSPOT DOS MATOS
-    ],   */
-
-	// 3. FORTALEZA (Com IP Público Próprio - Sem VPN)
-    'fortaleza' => [
-        'host'       => '189.45.78.164',       // COLOQUE AQUI O IP PÚBLICO DE FORTALEZA
-        'user'       => 'mulato',              // Usuário da RB de Fortaleza
-        'pass'       => 'vtgd65aoty',          // Senha da RB de Fortaleza
-        'port'       => '8080',                // Acesso direto na porta 8080, sem passar por Sobral
-        'hotspot_ip' => '10.50.0.1'            // COLOQUE O IP DO HOTSPOT DE FORTALEZA
-    ]
-]);
+// Os roteadores agora são gerenciados pelo banco de dados (tabela crm_roteadores)
 
 // =========================================================================
 // 3. CREDENCIAIS DE ACESSO AO PAINEL ADMINISTRATIVO
