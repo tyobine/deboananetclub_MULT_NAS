@@ -21,6 +21,7 @@ class Dashboard
         date_default_timezone_set('America/Fortaleza');
 
         // Auto-limpeza: derruba quem passou da hora
+        // ATENÇÃO: Fortemente recomendado migrar isso para um arquivo de CRON JOB futuramente.
         $db->query("UPDATE acessos_pix SET status = 'expirado' WHERE status = 'ativo' AND expira_em < NOW()");
 
         $hoje = $db->getRow("SELECT SUM(p.price_cents) as total FROM acessos_pix a INNER JOIN planos p ON a.plano_id = p.id WHERE a.status IN ('ativo', 'expirado') AND DATE(a.expira_em) = CURDATE() AND a.status != 'pendente'");
@@ -33,14 +34,22 @@ class Dashboard
         // A MÁGICA DO MULTI-NAS: Somar utilizadores de TODOS os roteadores
         // ------------------------------------------------------------------
         $clientesAtivos = 0;
+        $errosRoteadores = []; // Guarda roteadores que falharam na consulta
+
         foreach (ROUTERS as $router_id => $config) {
             try {
                 $mk = new Mikrotik($router_id);
                 $clientesAtivos += $mk->contarUtilizadoresAtivos();
             } catch (\Throwable $th) {
-                // Se algum roteador estiver offline, ignora
+                // Registra o erro de forma que a View possa exibir um alerta ao Admin
+                $errosRoteadores[] = $config['name'] ?? "Roteador ID: $router_id";
             }
         }
+
+        // Passa a variável de erros para a sessão para que a View possa renderizar um alerta amigável
+        $_SESSION['alertas_dashboard'] = !empty($errosRoteadores) 
+            ? "Falha ao consultar usuários ativos nos seguintes roteadores: " . implode(', ', $errosRoteadores) 
+            : null;
 
         $vendas7Dias = $db->getAll("SELECT DATE_FORMAT(a.expira_em, '%d/%m') as dia, SUM(p.price_cents) as total FROM acessos_pix a INNER JOIN planos p ON a.plano_id = p.id WHERE a.status IN ('ativo', 'expirado') AND a.status != 'pendente' AND a.expira_em >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(a.expira_em) ORDER BY a.expira_em ASC");
 

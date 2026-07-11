@@ -10,17 +10,8 @@ $db_metricas = new Banco();
     .media-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; background: #111; }
     .media-card { transition: transform 0.2s; border: 1px solid #ddd; }
     .media-card:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
-    .box-ativo { border: 2px solid #198754; background-color: #f8fff9; }
-    .box-expirado { border: 2px solid #dc3545; background-color: #fff8f8; opacity: 0.8; }
-    .box-programado { border: 2px solid #ffc107; background-color: #fffbf0; }
-    .badge-metricas { position: absolute; top: -10px; right: -10px; background-color: #212529; color: #ffffff; font-weight: 700; font-size: 0.85rem; border-radius: 20px; padding: 4px 10px; display: flex; gap: 4px; }
-    .badge-metricas span { display: flex; align-items: center; gap: 4px; }
-    .text-pink { color: #ff00ff; } 
-    .text-blue { color: #00d4ff; }
     .client-section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #0d6efd; }
     .badge-local { position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-    .badge-status { position: absolute; bottom: 10px; left: 10px; z-index: 10; font-size: 0.75rem; }
-    .badge-dias { position: absolute; bottom: 10px; right: 10px; z-index: 10; font-size: 0.75rem; }
 </style>
 
 <div class="container mb-5">
@@ -31,14 +22,12 @@ $db_metricas = new Banco();
     <?php if (isset($_GET['sucesso'])): ?>
         <div class="alert alert-success alert-dismissible fade show shadow-sm">
             <?php if ($_GET['sucesso'] == 'cliente_salvo'): ?><strong>Sucesso!</strong> Anunciante cadastrado.
-            <?php elseif ($_GET['sucesso'] == 'midia_salva'): ?><strong>Sucesso!</strong> Mídia vinculada com pacote.
+            <?php elseif ($_GET['sucesso'] == 'midia_salva'): ?><strong>Sucesso!</strong> Mídia vinculada.
             <?php elseif ($_GET['sucesso'] == 'status_atualizado'): ?><strong>Sucesso!</strong> Status atualizado.
             <?php elseif ($_GET['sucesso'] == 'midia_deletada'): ?><strong>Sucesso!</strong> Mídia excluída.
             <?php elseif ($_GET['sucesso'] == 'dados_atualizados'): ?><strong>Sucesso!</strong> Dados do anúncio atualizados!
             <?php elseif ($_GET['sucesso'] == 'local_salvo'): ?><strong>Sucesso!</strong> Novo roteador cadastrado.
-            <?php elseif ($_GET['sucesso'] == 'anuncio_renovado'): ?><strong>Sucesso!</strong> Anúncio renovado!
-            <?php elseif ($_GET['sucesso'] == 'anuncio_reativado'): ?><strong>Sucesso!</strong> Anúncio reativado!
-            <?php elseif ($_GET['sucesso'] == 'data_atualizada'): ?><strong>Sucesso!</strong> Data de fim atualizada!
+            <?php elseif ($_GET['sucesso'] == 'data_atualizada'): ?><strong>Sucesso!</strong> Período de exibição atualizado!
             <?php endif; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -64,7 +53,7 @@ $db_metricas = new Banco();
             </div>
 
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white fw-bold"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar Mídia</div>
+                <div class="card-header bg-primary text-white fw-bold"><i class="fa-solid fa-cloud-arrow-up"></i> Envio Rápido de Mídia</div>
                 <div class="card-body">
                     <form action="/admin/anuncio/upload-midia" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
@@ -90,26 +79,12 @@ $db_metricas = new Banco();
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">Link de Destino</label>
+                            <label class="form-label small fw-bold">Link de Destino (Opcional)</label>
                             <input type="url" name="link_destino" class="form-control">
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Pacote de Exibição</label>
-                            <select name="pacote_tipo" class="form-select" required>
-                                <option value="1dia">1 Dia</option>
-                                <option value="1semana">1 Semana</option>
-                                <option value="15dias">15 Dias</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Valor do Pacote (R$)</label>
-                            <input type="number" name="valor_pacote" class="form-control" placeholder="0.00" step="0.01" required>
-                        </div>
-
                         <div class="mb-4">
-                            <label class="form-label small fw-bold">Arquivo</label>
+                            <label class="form-label small fw-bold">Arquivo (Imagem ou Vídeo)</label>
                             <input type="file" name="arquivo_upload" class="form-control" accept="image/*,video/mp4" required>
                         </div>
 
@@ -120,7 +95,20 @@ $db_metricas = new Banco();
         </div>
 
         <div class="col-md-8">
-            <h5 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-users-viewfinder"></i> Gestão de Campanhas</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0 text-secondary"><i class="fa-solid fa-users-viewfinder"></i> Gestão de Campanhas</h5>
+                
+                <?php if (!empty($anunciantes)): ?>
+                <div style="width: 250px;">
+                    <select id="filtroAnunciante" class="form-select shadow-sm" onchange="filtrarClientes()">
+                        <option value="todos">Exibir Todos os Clientes</option>
+                        <?php foreach ($anunciantes as $cliente): ?>
+                            <option value="<?= $cliente['id'] ?>"><?= htmlspecialchars($cliente['nome_empresa']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php endif; ?>
+            </div>
             
             <?php if (empty($anunciantes)): ?>
                 <div class="text-center w-100 py-5 bg-white rounded shadow-sm text-muted border">
@@ -128,7 +116,7 @@ $db_metricas = new Banco();
                 </div>
             <?php else: ?>
                 <?php foreach ($anunciantes as $cliente): ?>
-                    <div class="client-section">
+                    <div class="client-section" data-cliente-id="<?= $cliente['id'] ?>">
                         <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
                             <h5 class="mb-0 fw-bold text-dark"><i class="fa-regular fa-building text-primary"></i> <?= htmlspecialchars($cliente['nome_empresa']) ?></h5>
                         </div>
@@ -143,33 +131,13 @@ $db_metricas = new Banco();
                                     $is_ativo = $ad['exibir'] === 'sim';
                                     $caminho = htmlspecialchars($ad['caminho_arquivo']);
                                     $local = htmlspecialchars($ad['localizacao'] ?? 'todos');
-                                    $total_views = $db_metricas->getRow("SELECT COUNT(id) as total FROM crm_views WHERE anuncio_id = ?", [$ad['id']])['total'] ?? 0;
-                                    $total_cliques = $db_metricas->getRow("SELECT COUNT(id) as total FROM crm_cliques WHERE anuncio_id = ?", [$ad['id']])['total'] ?? 0;
-                                    
-                                    // Calcular status e dias restantes
-                                    $statusInfo = Anuncios::obterStatus($ad['data_inicio'], $ad['data_fim']);
-                                    $diasRestantes = Anuncios::obterDiasRestantes($ad['data_fim']);
-                                    $classBoxStatus = $statusInfo['status'] === 'ativo' ? 'box-ativo' : ($statusInfo['status'] === 'expirado' ? 'box-expirado' : 'box-programado');
+                                    // Prepara o valor no formato que o input type number entende (ex: 50.00)
+                                    $valor_formatado = number_format($ad['valor_pacote'] / 100, 2, '.', '');
                                     ?>
                                     <div class="col-6 col-md-6 col-lg-4">
-                                        <div class="card media-card h-100 p-2 position-relative <?= $is_ativo ? $classBoxStatus : 'box-expirado' ?>">
+                                        <div class="card media-card h-100 p-2 position-relative bg-light">
                                             
-                                            <span class="badge bg-info text-dark badge-local"><i class="fa-solid fa-location-dot"></i> <?= $local === 'todos' ? 'Global' : mb_strtoupper($local) ?></span>
-
-                                            <span class="badge badge-status bg-<?= $statusInfo['badge'] ?>"><i class="fa-solid fa-circle-small"></i> <?= $statusInfo['texto'] ?></span>
-
-                                            <?php if($statusInfo['status'] === 'ativo' && $diasRestantes <= 3): ?>
-                                                <span class="badge badge-dias bg-danger"><i class="fa-solid fa-clock"></i> <?= $diasRestantes ?> dias</span>
-                                            <?php elseif($statusInfo['status'] === 'ativo'): ?>
-                                                <span class="badge badge-dias bg-info"><i class="fa-solid fa-clock"></i> <?= $diasRestantes ?> dias</span>
-                                            <?php endif; ?>
-
-                                            <?php if($total_views > 0 || $total_cliques > 0): ?>
-                                            <div class="badge-metricas">
-                                                <span class="text-blue"><i class="fa-solid fa-eye"></i> <?= $total_views > 999 ? '999+' : $total_views ?></span>
-                                                <span class="text-pink"><i class="fa-solid fa-hand-pointer"></i> <?= $total_cliques > 999 ? '999+' : $total_cliques ?></span>
-                                            </div>
-                                            <?php endif; ?>
+                                            <span class="badge bg-dark text-white badge-local"><i class="fa-solid fa-location-dot"></i> <?= $local === 'todos' ? 'Global' : mb_strtoupper($local) ?></span>
 
                                             <?php if ($is_video): ?>
                                                 <video class="media-preview" autoplay loop muted playsinline><source src="<?= $caminho ?>" type="video/mp4"></video>
@@ -177,8 +145,8 @@ $db_metricas = new Banco();
                                                 <img src="<?= $caminho ?>" class="media-preview">
                                             <?php endif; ?>
 
-                                            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                                                <form action="/admin/anuncio/toggle-midia" method="POST" class="m-0">
+                                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                                                <form action="/admin/anuncio/toggle-midia" method="POST" class="m-0" title="Ativar/Pausar Mídia">
                                                     <input type="hidden" name="anuncio_id" value="<?= $ad['id'] ?>">
                                                     <input type="hidden" name="exibir" value="<?= $is_ativo ? 'nao' : 'sim' ?>">
                                                     <div class="form-check form-switch m-0">
@@ -187,16 +155,11 @@ $db_metricas = new Banco();
                                                 </form>
 
                                                 <div class="d-flex gap-1">
-                                                    <button type="button" class="btn btn-outline-primary btn-sm" title="Editar" onclick="abrirModalEditar(<?= $ad['id'] ?>, '<?= htmlspecialchars($ad['link_destino']) ?>', '<?= htmlspecialchars($ad['localizacao']) ?>')"><i class="fa-solid fa-pen"></i></button>
+                                                    <button type="button" class="btn btn-outline-primary btn-sm" title="Editar Anúncio (Dados e Valor)" onclick="abrirModalEditar(<?= $ad['id'] ?>, '<?= htmlspecialchars($ad['link_destino']) ?>', '<?= htmlspecialchars($ad['localizacao']) ?>', '<?= $valor_formatado ?>')"><i class="fa-solid fa-pen-to-square"></i></button>
                                                     
-                                                    <?php if ($statusInfo['status'] === 'expirado'): ?>
-                                                        <button type="button" class="btn btn-outline-success btn-sm" title="Reativar" onclick="abrirModalReativar(<?= $ad['id'] ?>)"><i class="fa-solid fa-arrow-rotate-left"></i></button>
-                                                    <?php else: ?>
-                                                        <button type="button" class="btn btn-outline-warning btn-sm" title="Renovar" onclick="abrirModalRenovar(<?= $ad['id'] ?>)"><i class="fa-solid fa-arrows-rotate"></i></button>
-                                                        <button type="button" class="btn btn-outline-info btn-sm" title="Editar Data" onclick="abrirModalEditarData(<?= $ad['id'] ?>, '<?= htmlspecialchars($ad['data_fim']) ?>')"><i class="fa-solid fa-calendar"></i></button>
-                                                    <?php endif; ?>
+                                                    <button type="button" class="btn btn-outline-info btn-sm" title="Programar Datas" onclick="abrirModalEditarDatas(<?= $ad['id'] ?>, '<?= htmlspecialchars($ad['data_inicio']) ?>', '<?= htmlspecialchars($ad['data_fim']) ?>')"><i class="fa-solid fa-calendar-check"></i></button>
                                                     
-                                                    <form action="/admin/anuncio/delete-midia" method="POST" class="m-0" onsubmit="return confirm('Tem certeza?');">
+                                                    <form action="/admin/anuncio/delete-midia" method="POST" class="m-0" onsubmit="return confirm('Tem certeza que deseja excluir esta mídia definitivamente?');">
                                                         <input type="hidden" name="anuncio_id" value="<?= $ad['id'] ?>">
                                                         <button type="submit" class="btn btn-outline-danger btn-sm" title="Deletar"><i class="fa-solid fa-trash-can"></i></button>
                                                     </form>
@@ -238,13 +201,13 @@ $db_metricas = new Banco();
   </div>
 </div>
 
-<!-- MODAL: Editar Anúncio (Link + Localização) -->
+<!-- MODAL: Editar Anúncio (Link, Local e VALOR PAGO) -->
 <div class="modal fade" id="modalEditarAnuncio" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
-      <form action="/admin/anuncio/editar-link" method="POST">
+      <form action="/admin/anuncio/editar-dados-anuncio" method="POST">
         <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square text-primary"></i> Editar Anúncio</h5>
+          <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square text-primary"></i> Editar Dados do Anúncio</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
@@ -263,6 +226,12 @@ $db_metricas = new Banco();
             <label class="form-label small fw-bold">Link de Destino</label>
             <input type="url" name="link_destino" id="edit_link_destino" class="form-control">
           </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Valor Recebido (R$)</label>
+            <input type="number" name="valor_pacote" id="edit_valor_pacote" class="form-control" placeholder="0.00" step="0.01">
+            <div class="form-text text-muted">Usado para calcular Ticket Médio e faturamento na tela de Relatórios.</div>
+          </div>
         </div>
         <div class="modal-footer"><button type="submit" class="btn btn-primary fw-bold px-4">Salvar Alterações</button></div>
       </form>
@@ -270,86 +239,32 @@ $db_metricas = new Banco();
   </div>
 </div>
 
-<!-- MODAL: Renovar Anúncio -->
-<div class="modal fade" id="modalRenovar" tabindex="-1">
+<!-- MODAL: Editar Datas (Início e Fim) -->
+<div class="modal fade" id="modalEditarDatas" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
-      <form action="/admin/anuncio/renovar-anuncio" method="POST">
+      <form action="/admin/anuncio/editar-datas" method="POST">
         <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold"><i class="fa-solid fa-arrows-rotate text-warning"></i> Renovar Anúncio</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-4">
-          <input type="hidden" name="anuncio_id" id="renovar_anuncio_id">
-          <div class="mb-3">
-            <label class="form-label small fw-bold">Selecione o Pacote</label>
-            <select name="pacote_tipo" class="form-select" required>
-                <option value="1dia">1 Dia</option>
-                <option value="1semana" selected>1 Semana</option>
-                <option value="15dias">15 Dias</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-warning fw-bold px-4">Renovar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Reativar Anúncio -->
-<div class="modal fade" id="modalReativar" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <form action="/admin/anuncio/reativar-anuncio" method="POST">
-        <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold"><i class="fa-solid fa-arrow-rotate-left text-success"></i> Reativar Anúncio</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-4">
-          <input type="hidden" name="anuncio_id" id="reativar_anuncio_id">
-          <div class="mb-3">
-            <label class="form-label small fw-bold">Selecione o Pacote</label>
-            <select name="pacote_tipo" class="form-select" required>
-                <option value="1dia">1 Dia</option>
-                <option value="1semana" selected>1 Semana</option>
-                <option value="15dias">15 Dias</option>
-            </select>
-          </div>
-          <div class="alert alert-info small mb-0">
-            <i class="fa-solid fa-info-circle"></i> O anúncio será reativado do zero com o pacote selecionado.
-          </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-success fw-bold px-4">Reativar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: Editar Data de Fim -->
-<div class="modal fade" id="modalEditarData" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <form action="/admin/anuncio/editar-data-fim" method="POST">
-        <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold"><i class="fa-solid fa-calendar text-info"></i> Editar Data de Fim</h5>
+          <h5 class="modal-title fw-bold"><i class="fa-solid fa-calendar-check text-info"></i> Programar Exibição</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
           <input type="hidden" name="anuncio_id" id="editar_data_anuncio_id">
+          
           <div class="mb-3">
-            <label class="form-label small fw-bold">Nova Data de Fim</label>
+            <label class="form-label small fw-bold">Início da Exibição</label>
+            <input type="datetime-local" name="data_inicio" id="editar_data_inicio" class="form-control" required>
+            <div class="form-text">Para programar para o futuro, coloque uma data à frente.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Fim da Exibição (Vencimento)</label>
             <input type="datetime-local" name="data_fim" id="editar_data_fim" class="form-control" required>
           </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-info fw-bold px-4">Atualizar Data</button>
+            <button type="submit" class="btn btn-info fw-bold px-4 text-white">Salvar Programação</button>
         </div>
       </form>
     </div>
@@ -361,27 +276,32 @@ function abrirModalLocal() {
     new bootstrap.Modal(document.getElementById('modalNovoLocal')).show();
 }
 
-function abrirModalEditar(id, linkAtual, localAtual) {
+function abrirModalEditar(id, linkAtual, localAtual, valorAtual) {
     document.getElementById('edit_anuncio_id').value = id;
     document.getElementById('edit_link_destino').value = linkAtual;
     document.getElementById('edit_localizacao').value = localAtual;
+    document.getElementById('edit_valor_pacote').value = valorAtual;
     new bootstrap.Modal(document.getElementById('modalEditarAnuncio')).show();
 }
 
-function abrirModalRenovar(id) {
-    document.getElementById('renovar_anuncio_id').value = id;
-    new bootstrap.Modal(document.getElementById('modalRenovar')).show();
-}
-
-function abrirModalReativar(id) {
-    document.getElementById('reativar_anuncio_id').value = id;
-    new bootstrap.Modal(document.getElementById('modalReativar')).show();
-}
-
-function abrirModalEditarData(id, dataAtual) {
+function abrirModalEditarDatas(id, dataInicio, dataFim) {
     document.getElementById('editar_data_anuncio_id').value = id;
-    document.getElementById('editar_data_fim').value = dataAtual;
-    new bootstrap.Modal(document.getElementById('modalEditarData')).show();
+    document.getElementById('editar_data_inicio').value = dataInicio;
+    document.getElementById('editar_data_fim').value = dataFim;
+    new bootstrap.Modal(document.getElementById('modalEditarDatas')).show();
+}
+
+function filtrarClientes() {
+    const selecao = document.getElementById('filtroAnunciante').value;
+    const sections = document.querySelectorAll('.client-section');
+    
+    sections.forEach(sec => {
+        if (selecao === 'todos' || sec.getAttribute('data-cliente-id') === selecao) {
+            sec.style.display = 'block';
+        } else {
+            sec.style.display = 'none';
+        }
+    });
 }
 </script>
 <script src="/src/bootstrap.bundle.min.js"></script>

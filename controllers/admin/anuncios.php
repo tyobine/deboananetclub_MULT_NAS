@@ -65,26 +65,42 @@ class Anuncios
         $anunciante_id = (int)($_POST['anunciante_id'] ?? 0);
         $link_destino = trim($_POST['link_destino'] ?? '');
         $localizacao = trim($_POST['localizacao'] ?? 'todos');
-        $pacote_tipo = $_POST['pacote_tipo'] ?? '1dia';
-        $valor_pacote = (int)($_POST['valor_pacote'] ?? 0);
 
         if ($anunciante_id > 0 && isset($_FILES['arquivo_upload']) && $_FILES['arquivo_upload']['error'] === UPLOAD_ERR_OK) {
             
-            $extensao = strtolower(pathinfo($_FILES['arquivo_upload']['name'], PATHINFO_EXTENSION));
+            $tmp_name = $_FILES['arquivo_upload']['tmp_name'];
+            
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $tmp_name);
+            finfo_close($finfo);
+
+            $mime_permitidos = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'image/gif' => 'gif',
+                'video/mp4' => 'mp4'
+            ];
+
+            if (!array_key_exists($mime_type, $mime_permitidos)) {
+                header("Location: /admin/anuncio?erro=formato_invalido");
+                exit;
+            }
+
+            $extensao = $mime_permitidos[$mime_type];
             $tipo = ($extensao === 'mp4') ? 'video' : 'imagem';
             $nome_arquivo = 'crm_' . $anunciante_id . '_' . time() . '.' . $extensao;
             $caminho_destino = __DIR__ . '/../../uploads/' . $nome_arquivo;
             $caminho_bd = '/uploads/' . $nome_arquivo;
 
-            if (move_uploaded_file($_FILES['arquivo_upload']['tmp_name'], $caminho_destino)) {
-                // Calcular data de fim baseado no pacote
+            if (move_uploaded_file($tmp_name, $caminho_destino)) {
                 $data_inicio = date('Y-m-d H:i:s');
-                $data_fim = $this->calcularDataFim($pacote_tipo);
+                $data_fim = date('Y-m-d H:i:s', strtotime('+30 days'));
 
+                // O valor fica R$ 0,00 na hora do upload. Sem atrito.
                 $this->db->query("
                     INSERT INTO crm_anuncios (anunciante_id, tipo, caminho_arquivo, link_destino, exibir, localizacao, pacote_tipo, valor_pacote, data_inicio, data_fim) 
-                    VALUES (?, ?, ?, ?, 'sim', ?, ?, ?, ?, ?)
-                ", [$anunciante_id, $tipo, $caminho_bd, $link_destino, $localizacao, $pacote_tipo, $valor_pacote, $data_inicio, $data_fim]);
+                    VALUES (?, ?, ?, ?, 'sim', ?, 'avulso', 0, ?, ?)
+                ", [$anunciante_id, $tipo, $caminho_bd, $link_destino, $localizacao, $data_inicio, $data_fim]);
                 
                 header("Location: /admin/anuncio?sucesso=midia_salva");
                 exit;
@@ -118,124 +134,42 @@ class Anuncios
         exit;
     }
 
-    public function editar_link()
+    public function editar_dados_anuncio()
     {
         $id = (int)($_POST['anuncio_id'] ?? 0);
         $novo_link = trim($_POST['link_destino'] ?? '');
         $nova_localizacao = trim($_POST['localizacao'] ?? 'todos');
         
+        // Pega o valor recebido no input, aceitando decimais, e converte pra centavos para salvar no banco.
+        $valor_float = (float)($_POST['valor_pacote'] ?? 0);
+        $valor_pacote = (int)round($valor_float * 100);
+        
         if ($id > 0) {
-            $this->db->query("UPDATE crm_anuncios SET link_destino = ?, localizacao = ? WHERE id = ?", [$novo_link, $nova_localizacao, $id]);
+            $this->db->query("UPDATE crm_anuncios SET link_destino = ?, localizacao = ?, valor_pacote = ? WHERE id = ?", [$novo_link, $nova_localizacao, $valor_pacote, $id]);
         }
         header("Location: /admin/anuncio?sucesso=dados_atualizados");
         exit;
     }
 
-    /**
-     * Renovar anúncio (estender data de fim)
-     */
-    public function renovar_anuncio()
+    public function editar_datas()
     {
         $id = (int)($_POST['anuncio_id'] ?? 0);
-        $pacote_tipo = $_POST['pacote_tipo'] ?? '1dia';
+        $data_inicio = trim($_POST['data_inicio'] ?? '');
+        $data_fim = trim($_POST['data_fim'] ?? '');
 
-        if ($id > 0) {
-            $anuncio = $this->db->getRow("SELECT data_fim FROM crm_anuncios WHERE id = ?", [$id]);
-            
-            if ($anuncio) {
-                $nova_data_fim = $this->calcularDataFim($pacote_tipo, $anuncio['data_fim']);
-                $valor_pacote = $this->obterValorPacote($pacote_tipo);
-
-                $this->db->query(
-                    "UPDATE crm_anuncios SET data_fim = ?, pacote_tipo = ?, valor_pacote = valor_pacote + ? WHERE id = ?",
-                    [$nova_data_fim, $pacote_tipo, $valor_pacote, $id]
-                );
-            }
-        }
-        header("Location: /admin/anuncio?sucesso=anuncio_renovado");
-        exit;
-    }
-
-    /**
-     * Reativar anúncio com nova data de fim
-     */
-    public function reativar_anuncio()
-    {
-        $id = (int)($_POST['anuncio_id'] ?? 0);
-        $pacote_tipo = $_POST['pacote_tipo'] ?? '1dia';
-
-        if ($id > 0) {
-            $data_inicio = date('Y-m-d H:i:s');
-            $data_fim = $this->calcularDataFim($pacote_tipo);
-            $valor_pacote = $this->obterValorPacote($pacote_tipo);
-
-            $this->db->query(
-                "UPDATE crm_anuncios SET data_inicio = ?, data_fim = ?, pacote_tipo = ?, valor_pacote = ?, exibir = 'sim' WHERE id = ?",
-                [$data_inicio, $data_fim, $pacote_tipo, $valor_pacote, $id]
-            );
-        }
-        header("Location: /admin/anuncio?sucesso=anuncio_reativado");
-        exit;
-    }
-
-    /**
-     * Editar data de fim manualmente
-     */
-    public function editar_data_fim()
-    {
-        $id = (int)($_POST['anuncio_id'] ?? 0);
-        $nova_data_fim = trim($_POST['data_fim'] ?? '');
-
-        if ($id > 0 && !empty($nova_data_fim)) {
-            $this->db->query("UPDATE crm_anuncios SET data_fim = ? WHERE id = ?", [$nova_data_fim, $id]);
+        if ($id > 0 && !empty($data_inicio) && !empty($data_fim)) {
+            $this->db->query("UPDATE crm_anuncios SET data_inicio = ?, data_fim = ?, exibir = 'sim' WHERE id = ?", [$data_inicio, $data_fim, $id]);
         }
         header("Location: /admin/anuncio?sucesso=data_atualizada");
         exit;
     }
 
-    /**
-     * Calcular data de fim baseado no pacote
-     */
-    private function calcularDataFim($pacote_tipo, $dataBase = null)
+    public static function obterStatus($dataInicio, $dataFim, $exibir = 'sim')
     {
-        $data = $dataBase ? new DateTime($dataBase) : new DateTime();
-
-        switch ($pacote_tipo) {
-            case '1dia':
-                $data->add(new DateInterval('P1D'));
-                break;
-            case '1semana':
-                $data->add(new DateInterval('P7D'));
-                break;
-            case '15dias':
-                $data->add(new DateInterval('P15D'));
-                break;
-            default:
-                $data->add(new DateInterval('P1D'));
+        if ($exibir === 'nao') {
+            return ['status' => 'inativo', 'badge' => 'secondary', 'texto' => 'Pausado/Inativo'];
         }
 
-        return $data->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * Obter valor do pacote (em centavos)
-     */
-    private function obterValorPacote($pacote_tipo)
-    {
-        $valores = [
-            '1dia' => 5000,      // R$ 50,00
-            '1semana' => 30000,  // R$ 300,00
-            '15dias' => 60000    // R$ 600,00
-        ];
-
-        return $valores[$pacote_tipo] ?? 0;
-    }
-
-    /**
-     * Obter status do anúncio
-     */
-    public static function obterStatus($dataInicio, $dataFim)
-    {
         $agora = new DateTime();
         $inicio = new DateTime($dataInicio);
         $fim = new DateTime($dataFim);
@@ -249,15 +183,13 @@ class Anuncios
         }
     }
 
-    /**
-     * Calcular dias restantes
-     */
     public static function obterDiasRestantes($dataFim)
     {
         $agora = new DateTime();
         $fim = new DateTime($dataFim);
         $intervalo = $agora->diff($fim);
-
+        
+        if ($fim < $agora) return 0;
         return $intervalo->days;
     }
 }

@@ -5,7 +5,7 @@
         <h2><i class="fa-solid fa-gauge"></i> Dashboard Multi-NAS (Geral)</h2>
         <div class="d-flex gap-2">
             <span class="badge bg-primary p-2"><i class="fa-solid fa-user-shield"></i> Admin Logado</span>
-            <span class="badge bg-info p-2"><i class="fa-solid fa-server"></i> Roteadores</span>
+            <!-- Tag de Roteadores removida conforme solicitado -->
         </div>
     </div>
 
@@ -73,6 +73,14 @@
         </div>
     </div>
 
+    <!-- Se houve erro na conexão de algum roteador -->
+    <?php if(!empty($_SESSION['alertas_dashboard'])): ?>
+        <div class="alert alert-danger shadow-sm">
+            <i class="fa-solid fa-triangle-exclamation"></i> <?= $_SESSION['alertas_dashboard'] ?>
+            <?php unset($_SESSION['alertas_dashboard']); ?>
+        </div>
+    <?php endif; ?>
+
     <!-- === SEGUNDA LINHA: Gráfico + Métricas de Anúncios === -->
     <div class="row g-4 mb-5">
         <div class="col-lg-8">
@@ -87,47 +95,34 @@
         <!-- CARD: Métricas de Anúncios -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm p-4 h-100">
-                <h5 class="card-title mb-4"><i class="fa-solid fa-tv text-info"></i> Anúncios</h5>
+                <h5 class="card-title mb-4"><i class="fa-solid fa-tv text-info"></i> Resumo de Publicidade</h5>
                 
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small class="fw-bold">Ativos</small>
+                        <small class="fw-bold">Anúncios Ativos</small>
                         <span class="badge bg-success"><?= $anunciosAtivos ?></span>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small class="fw-bold">Programados</small>
+                        <small class="fw-bold">Programados para o Futuro</small>
                         <span class="badge bg-warning"><?= $anunciosProgramados ?></span>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <small class="fw-bold">Expirados</small>
+                        <small class="fw-bold">Anúncios Expirados</small>
                         <span class="badge bg-danger"><?= $anunciosExpirados ?></span>
                     </div>
                 </div>
 
                 <hr>
 
-                <h6 class="text-muted mt-3 mb-2"><i class="fa-solid fa-chart-pie"></i> Receita por Pacote</h6>
-                <?php if (!empty($receitaPorPacote)): ?>
-                    <?php foreach ($receitaPorPacote as $pacote): ?>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-secondary">
-                                <?php 
-                                $labels = ['1dia' => '1 Dia', '1semana' => '1 Semana', '15dias' => '15 Dias'];
-                                echo $labels[$pacote['pacote_tipo']] ?? $pacote['pacote_tipo'];
-                                ?>
-                            </small>
-                            <small class="fw-bold text-success">R$ <?= number_format($pacote['total'] / 100, 2, ',', '.') ?></small>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-muted small">Nenhum anúncio ainda</p>
-                <?php endif; ?>
+                <div class="text-center mt-3">
+                    <a href="/admin/relatorio-anuncios" class="btn btn-outline-primary btn-sm w-100 fw-bold">Ver Relatório Detalhado</a>
+                </div>
             </div>
         </div>
     </div>

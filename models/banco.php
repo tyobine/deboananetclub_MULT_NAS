@@ -3,44 +3,77 @@
 
 require_once __DIR__ . '/../config/config.php';
 
-class Banco
-{
+class Banco {
     private $pdo;
 
-    public function __construct()
-    {
+    public function __construct() {
         try {
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
-            $this->pdo = new PDO($dsn, DB_USER, DB_PASS, [
+            // A mágica da consistência acontece aqui:
+            // Forçamos o charset e o fuso horário (-03:00 Fortaleza) direto na inicialização do MySQL
+            $opcoes = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, time_zone = '-03:00'"
+            ];
+
+            $this->pdo = new PDO(
+                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+                DB_USER,
+                DB_PASS,
+                $opcoes
+            );
         } catch (PDOException $e) {
-            // Em caso de falha no banco, regista no log do sistema e aborta para não expor erros no ecrã
-            file_put_contents(__DIR__ . '/../webhook_log.txt', date('Y-m-d H:i:s') . " - FALHA CRÍTICA DB: " . $e->getMessage() . "\n", FILE_APPEND);
-            die("Erro crítico: Falha de comunicação com o banco de dados.");
+            // Em produção, nunca exiba o erro real do banco para o usuário final
+            die("Erro crítico de infraestrutura: Falha na comunicação com o banco de dados.");
         }
     }
 
-    // Método genérico para INSERTS, UPDATES e DELETES
-    public function query($sql, $params = [])
-    {
+    public function query($sql, $params = []) {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt;
     }
 
-    // Pega uma única linha (ex: buscar a sessão de um MAC)
-    public function getRow($sql, $params = [])
-    {
-        $stmt = $this->query($sql, $params);
-        return $stmt->fetch();
+    public function getAll($sql, $params = []) {
+        return $this->query($sql, $params)->fetchAll();
     }
 
-    // Pega várias linhas (ex: buscar as métricas e todos os planos)
-    public function getAll($sql, $params = [])
-    {
-        $stmt = $this->query($sql, $params);
-        return $stmt->fetchAll();
+    public function getRow($sql, $params = []) {
+        return $this->query($sql, $params)->fetch();
+    }
+
+    public function insert($tabela, $dados) {
+        $chaves = array_keys($dados);
+        $campos = implode(', ', $chaves);
+        $valores = ':' . implode(', :', $chaves);
+
+        $sql = "INSERT INTO {$tabela} ({$campos}) VALUES ({$valores})";
+        $this->query($sql, $dados);
+        return $this->pdo->lastInsertId();
+    }
+
+    public function update($tabela, $dados, $condicao, $paramsCondicao = []) {
+        $set = [];
+        foreach ($dados as $chave => $valor) {
+            $set[] = "{$chave} = :{$chave}";
+        }
+        $setStr = implode(', ', $set);
+
+        $sql = "UPDATE {$tabela} SET {$setStr} WHERE {$condicao}";
+        $this->query($sql, array_merge($dados, $paramsCondicao));
+    }
+    
+    // Suporte a transações seguras (essencial para pagamentos)
+    public function beginTransaction() {
+        return $this->pdo->beginTransaction();
+    }
+
+    public function commit() {
+        return $this->pdo->commit();
+    }
+
+    public function rollBack() {
+        return $this->pdo->rollBack();
     }
 }
+?>

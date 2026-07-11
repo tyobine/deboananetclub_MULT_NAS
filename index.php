@@ -131,25 +131,17 @@ switch ($url) {
         (new Anuncios())->deletar_midia();
         break;
 
-    case 'admin/anuncio/editar-link':
-        (new Anuncios())->editar_link();
-        break;
-
     case 'admin/anuncio/salvar-local':
         (new Anuncios())->salvar_local();
         break;
 
-    // === NOVAS ROTAS: GESTÃO DE PACOTES E DATAS ===
-    case 'admin/anuncio/renovar-anuncio':
-        (new Anuncios())->renovar_anuncio();
+    // === ROTAS OTIMIZADAS DE EDIÇÃO DE ANÚNCIOS ===
+    case 'admin/anuncio/editar-dados-anuncio':
+        (new Anuncios())->editar_dados_anuncio();
         break;
 
-    case 'admin/anuncio/reativar-anuncio':
-        (new Anuncios())->reativar_anuncio();
-        break;
-
-    case 'admin/anuncio/editar-data-fim':
-        (new Anuncios())->editar_data_fim();
+    case 'admin/anuncio/editar-datas':
+        (new Anuncios())->editar_datas();
         break;
 
     // === RELATÓRIOS DO CRM ===

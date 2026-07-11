@@ -5,7 +5,6 @@ require_once __DIR__ . '/../config/config.php';
 
 class MercadoPago
 {
-
     private function request($endpoint, $method = 'GET', $data = null, $customIdempotencyKey = null)
     {
         $url = "https://api.mercadopago.com/v1/" . $endpoint;
@@ -35,18 +34,24 @@ class MercadoPago
         return json_decode($response, true);
     }
 
-    // NOVA ASSINATURA: Agora aceita o $router_id
     public function criarPix($valor_cents, $mac, $ip, $plano_id, $descricao, $router_id = ROUTER_DEFAULT)
     {
         $valor_decimal = $valor_cents / 100;
-        $idempotencyKey = md5($mac . '_' . $plano_id . '_' . floor(time() / 10));
+        
+        // Chave de idempotência segura (1 minuto de janela para evitar duplicação por clique duplo)
+        $idempotencyKey = md5($mac . '_' . $plano_id . '_' . date('Y-m-d_H:i'));
 
-        date_default_timezone_set('America/Fortaleza');
-        $date_of_expiration = date('Y-m-d\TH:i:s.000-03:00', strtotime('+30 minutes'));
+        // =========================================================================
+        // CONSISTÊNCIA DE TEMPO (ISO 8601 exato exigido pelo Mercado Pago)
+        // =========================================================================
+        // P = Diferença para o Horário de Greenwich (GMT) com dois pontos entre horas e minutos (ex: -03:00)
+        // v = Milissegundos
+        $date_of_expiration = date('Y-m-d\TH:i:s.vP', strtotime('+30 minutes'));
 
-        $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-        $dominio = $_SERVER['HTTP_HOST'] ?? 'seudominio.com.br';
-        $notificationUrl = "{$protocolo}://{$dominio}/webhook";
+        // =========================================================================
+        // CONSISTÊNCIA DE URL DO WEBHOOK (Usando a BASE_URL do config.php)
+        // =========================================================================
+        $notificationUrl = BASE_URL . "/webhook";
 
         $externalReference = "hotspot_" . uniqid();
 
@@ -78,7 +83,7 @@ class MercadoPago
                 "mac_address" => $mac,
                 "ip_address"  => $ip,
                 "plano_id"    => $plano_id,
-                "router_id"   => $router_id  // INJETANDO A INFORMAÇÃO DA CIDADE AQUI!
+                "router_id"   => $router_id  // Injetando a informação do NAS correto
             ]
         ];
 

@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Evita listagem de diretórios
+Options -Indexes
+
+# Permite que a pasta src e uploads passem livremente sem serem redirecionadas
+RewriteCond %{REQUEST_URI} !^/src/
+RewriteCond %{REQUEST_URI} !^/uploads/
+
+# Roteamento padrão MVC
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
