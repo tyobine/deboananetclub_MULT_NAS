@@ -4,7 +4,8 @@ require_once __DIR__ . '/header.php';
 
 <div class="container mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-secondary mb-0"><i class="fa-solid fa-router"></i> Gerenciar Roteadores (Multi-NAS)</h3>
+        <!-- Correção do ícone no título -->
+        <h3 class="text-secondary mb-0"><i class="fa-solid fa-network-wired"></i> Gerenciar Roteadores (Multi-NAS)</h3>
         <button class="btn btn-primary fw-bold" onclick="abrirModalNovo()"><i class="fa-solid fa-plus"></i> Novo Roteador</button>
     </div>
 
@@ -82,7 +83,8 @@ require_once __DIR__ . '/header.php';
     <div class="modal-content border-0 shadow">
       <form action="/admin/roteadores/salvar" method="POST">
         <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold" id="modalTitle"><i class="fa-solid fa-router text-primary"></i> Cadastrar Roteador</h5>
+          <!-- Correção do ícone no modal -->
+          <h5 class="modal-title fw-bold" id="modalTitle"><i class="fa-solid fa-network-wired text-primary"></i> Cadastrar Roteador</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">

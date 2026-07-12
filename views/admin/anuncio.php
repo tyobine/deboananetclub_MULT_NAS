@@ -19,14 +19,6 @@ $tempo_limite = isset($sys_config['tempo_limite']) ? (int)$sys_config['tempo_lim
 $exibir_ad_pos_pago = isset($sys_config['exibir_ad_pos_pago']) ? $sys_config['exibir_ad_pos_pago'] : 'passivo';
 ?>
 
-<style>
-    .media-preview { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; background: #111; }
-    .media-card { transition: transform 0.2s; border: 1px solid #ddd; }
-    .media-card:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
-    .client-section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #0d6efd; }
-    .badge-local { position: absolute; top: 10px; left: 10px; z-index: 10; font-size: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-</style>
-
 <div class="container mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="text-secondary mb-0"><i class="fa-solid fa-rectangle-ad"></i> CRM de Publicidade</h3>
@@ -49,7 +41,7 @@ $exibir_ad_pos_pago = isset($sys_config['exibir_ad_pos_pago']) ? $sys_config['ex
 
     <div class="row g-4">
         <div class="col-md-4">
-            <!-- BLOCO DE CONFIGURAÇÕES GERAIS DO PORTAL (OTIMIZADO E COMPACTO) -->
+            <!-- BLOCO DE CONFIGURAÇÕES GERAIS DO PORTAL -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-secondary text-white fw-bold"><i class="fa-solid fa-sliders"></i> Configurações do Portal</div>
                 <div class="card-body p-3">
@@ -225,7 +217,7 @@ $exibir_ad_pos_pago = isset($sys_config['exibir_ad_pos_pago']) ? $sys_config['ex
     </div>
 </div>
 
-<!-- MODAL: Editar Anúncio (Link, Local e VALOR PAGO) -->
+<!-- MODAL: Editar Anúncio -->
 <div class="modal fade" id="modalEditarAnuncio" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
@@ -270,7 +262,7 @@ $exibir_ad_pos_pago = isset($sys_config['exibir_ad_pos_pago']) ? $sys_config['ex
   </div>
 </div>
 
-<!-- MODAL: Editar Datas (Início e Fim) -->
+<!-- MODAL: Editar Datas -->
 <div class="modal fade" id="modalEditarDatas" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">

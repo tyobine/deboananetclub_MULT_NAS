@@ -60,7 +60,7 @@ else {
     <link href="/src/css/style.css?v=<?php echo time(); ?>" rel="stylesheet">
 </head>
 
-<body>
+<body class="pagina-pub">
     <div class="ad-container px-3 text-center py-4">
         <div class="text-white mb-3">
             <h3 class="fw-bold">Acesso Patrocinado</h3>

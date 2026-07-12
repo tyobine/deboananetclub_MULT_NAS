@@ -1,7 +1,6 @@
-/* src/style.css */
-
+/* src/css/style.css */
 /* ==========================================================================
-   RESET E BASE GLOBAL (Apenas o mínimo, sem interferir no layout das telas)
+   RESET E BASE GLOBAL (HOTSPOT)
    ========================================================================== */
 body {
     margin: 0;
@@ -10,7 +9,7 @@ body {
 }
 
 /* ==========================================================================
-   TELA 1: LOGIN E PLANOS (A tela do Hotspot)
+   TELA 1: LOGIN E PLANOS
    ========================================================================== */
 body.pagina-login {
     background: linear-gradient(135deg, #0575E6 0%, #021B79 100%) !important;
@@ -122,7 +121,7 @@ body.pagina-institucional {
 }
 
 /* ==========================================================================
-   OUTRAS TELAS ESCOPADAS (Publicidade, Sucesso, Limite, Expirado, Pix)
+   PÁGINAS ADICIONAIS (Publicidade, Sucesso, Limite, Expirado, Pix)
    ========================================================================== */
 .ad-container {
     max-width: 500px;
@@ -218,7 +217,6 @@ body.pagina-institucional {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-/* --- PÁGINA DE POLÍTICAS (LGPD) --- */
 body.pagina-branca {
     background: #f8f9fa !important;
     color: #333333 !important;
@@ -234,7 +232,6 @@ body.pagina-branca {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-/* --- PÁGINA DE PAGAMENTO (PIX) --- */
 body.pagina-pix {
     background: linear-gradient(135deg, #0575E6 0%, #021B79 100%) !important;
     display: flex;
@@ -266,7 +263,6 @@ body.pagina-pix {
     border-radius: 5px;
 }
 
-/* --- PÁGINA DE TEMPO ESGOTADO --- */
 body.pagina-expirado {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
     display: flex;
@@ -286,7 +282,6 @@ body.pagina-expirado {
     line-height: 1;
 }
 
-/* --- PÁGINA DE LIMITE ATINGIDO --- */
 body.pagina-limite {
     background-color: #f8d7da !important;
     display: flex;
@@ -307,7 +302,6 @@ body.pagina-limite {
     text-align: center;
 }
 
-/* --- PÁGINA DE SUCESSO --- */
 body.pagina-sucesso {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
     display: flex;
@@ -327,7 +321,7 @@ body.pagina-sucesso {
 }
 
 /* ==========================================================================
-   CSS DO SUPORTE (CHAT DE TRIAGEM)
+   SUPORTE (CHAT DE TRIAGEM)
    ========================================================================== */
 .btn-float-suporte {
     position: fixed;
@@ -421,26 +415,11 @@ body.pagina-sucesso {
     animation: typing 1.4s infinite ease-in-out;
 }
 
-.typing-dot:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.typing-dot:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.typing-dot:nth-child(3) {
-    animation-delay: 0.4s;
-}
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes typing {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-4px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
 }

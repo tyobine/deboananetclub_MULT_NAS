@@ -6,22 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Administrativo</title>
     <link href="/src/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .login-card {
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-    </style>
+    <link href="/src/css/admin.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="d-flex align-items-center min-vh-100 admin-login">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">

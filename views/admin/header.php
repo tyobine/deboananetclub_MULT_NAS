@@ -11,18 +11,11 @@ $uri = $_SERVER['REQUEST_URI'];
     <title>Painel Admin - Portal Hotspot</title>
     <link href="/src/css/bootstrap.min.css" rel="stylesheet">
     <link href="/src/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-        }
-    </style>
+    <!-- Chama apenas o CSS do Admin -->
+    <link href="/src/css/admin.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="bg-light">
 
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm sticky-top">
         <div class="container">
@@ -40,8 +33,9 @@ $uri = $_SERVER['REQUEST_URI'];
                     <i class="fa-solid fa-list-check"></i> Transações
                 </a>
 
+                <!-- Correção do ícone aqui (de fa-router para fa-network-wired) -->
                 <a href="/admin/roteadores" class="btn <?= strpos($uri, 'roteadores') !== false ? 'btn-success' : 'btn-outline-light' ?> btn-sm me-1">
-                    <i class="fa-solid fa-router"></i> Roteadores
+                    <i class="fa-solid fa-network-wired"></i> Roteadores
                 </a>
 
                 <a href="/admin/anuncio" class="btn <?= (strpos($uri, 'anuncio') !== false && strpos($uri, 'relatorio') === false) ? 'btn-success' : 'btn-outline-light' ?> btn-sm me-1">

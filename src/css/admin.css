@@ -1,0 +1,52 @@
+/* src/css/admin.css */
+
+/* Fundo da tela de Login do Admin */
+body.admin-login {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.navbar-brand { 
+    font-weight: 700; 
+}
+
+.login-card { 
+    border-radius: 15px; 
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+}
+
+/* CRM de Anúncios */
+.media-preview { 
+    width: 100%; 
+    height: 140px; 
+    object-fit: cover; 
+    border-radius: 6px; 
+    background: #111; 
+}
+
+.media-card { 
+    transition: transform 0.2s; 
+    border: 1px solid #ddd; 
+}
+
+.media-card:hover { 
+    transform: scale(1.02); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+}
+
+.client-section { 
+    background: #fff; 
+    border-radius: 8px; 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    border-left: 5px solid #0d6efd; 
+}
+
+.badge-local { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    z-index: 10; 
+    font-size: 0.75rem; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+}
