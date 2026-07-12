@@ -120,6 +120,10 @@ switch ($url) {
         (new Anuncios())->index();
         break;
 
+    case 'admin/anuncio/salvar-configuracoes':
+        (new Anuncios())->salvar_configuracoes();
+        break;
+
     case 'admin/anuncio/salvar-cliente':
         (new Anuncios())->salvar_anunciante();
         break;

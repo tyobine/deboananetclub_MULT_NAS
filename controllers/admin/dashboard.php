@@ -2,7 +2,7 @@
 // controllers/admin/dashboard.php
 require_once __DIR__ . '/../../models/banco.php';
 require_once __DIR__ . '/../../models/mikrotik.php';
-require_once __DIR__ . '/../../utils/check_routers.php';
+require_once __DIR__ . '/../../models/Roteador.php';
 
 class Dashboard
 {
@@ -82,31 +82,44 @@ class Dashboard
     public function apiStatus()
     {
         header('Content-Type: application/json');
+        
         $clientesAtivos = 0;
         $errosRoteadores = [];
+        $dadosRoteadores = [];
 
-        require_once __DIR__ . '/../../models/Roteador.php';
         $modeloRoteador = new Roteador();
         $roteadores = $modeloRoteador->obterTodos();
 
-        foreach ($roteadores as $config) {
-            $router_id = $config['nome_identificador'];
-            try {
-                $mk = new Mikrotik($router_id);
-                $clientesAtivos += $mk->contarUtilizadoresAtivos();
-            } catch (\Throwable $th) {
-                $errosRoteadores[] = mb_strtoupper($router_id);
+        if (!empty($roteadores)) {
+            foreach ($roteadores as $router) {
+                // Identificador único (ex: "sobral", "matos")
+                $router_id = $router['nome_identificador'];
+                // Nome amigável, se não tiver usa o identificador em maiúsculo
+                $nome_exibicao = !empty($router['nome_exibicao']) ? $router['nome_exibicao'] : strtoupper($router_id);
+
+                try {
+                    $mk = new Mikrotik($router_id);
+                    $clientesAtivos += $mk->contarUtilizadoresAtivos();
+                    
+                    // Se não lançou exceção no contarUtilizadoresAtivos(), está online
+                    $dadosRoteadores[] = [
+                        'nome' => $nome_exibicao,
+                        'online' => true
+                    ];
+
+                } catch (\Throwable $th) {
+                    $errosRoteadores[] = $nome_exibicao;
+                    
+                    // Falhou a comunicação, marca como offline
+                    $dadosRoteadores[] = [
+                        'nome' => $nome_exibicao,
+                        'online' => false
+                    ];
+                }
             }
-        }
-
-        $rotoresStatus = VerificadorRoteadores::statusTodos();
-
-        $dadosRoteadores = [];
-        foreach ($rotoresStatus as $nome => $status) {
-            $dadosRoteadores[] = [
-                'nome' => VerificadorRoteadores::getNomeLegivel($nome),
-                'online' => $status['online']
-            ];
+        } else {
+             echo json_encode(['error' => 'Nenhum roteador configurado no banco de dados.']);
+             exit;
         }
 
         echo json_encode([

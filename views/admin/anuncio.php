@@ -1,9 +1,22 @@
 <?php
 require_once __DIR__ . '/header.php';
 require_once __DIR__ . '/../../models/banco.php';
-require_once __DIR__ . '/../../controllers/admin/anuncios.php';
 
 $db_metricas = new Banco();
+
+// Recupera as configurações globais cadastradas na tabela chave-valor
+$config_dados = $db_metricas->getAll("SELECT * FROM configuracoes");
+$sys_config = [];
+if (!empty($config_dados)) {
+    foreach ($config_dados as $row) {
+        $sys_config[$row['chave']] = $row['valor'];
+    }
+}
+
+// Define os valores padrão caso as chaves ainda não existam no banco
+$tempo_anuncio = isset($sys_config['tempo_anuncio']) ? (int)$sys_config['tempo_anuncio'] : 15;
+$tempo_limite = isset($sys_config['tempo_limite']) ? (int)$sys_config['tempo_limite'] : 30;
+$exibir_ad_pos_pago = isset($sys_config['exibir_ad_pos_pago']) ? $sys_config['exibir_ad_pos_pago'] : 'passivo';
 ?>
 
 <style>
@@ -28,6 +41,7 @@ $db_metricas = new Banco();
             <?php elseif ($_GET['sucesso'] == 'dados_atualizados'): ?><strong>Sucesso!</strong> Dados do anúncio atualizados!
             <?php elseif ($_GET['sucesso'] == 'local_salvo'): ?><strong>Sucesso!</strong> Novo roteador cadastrado.
             <?php elseif ($_GET['sucesso'] == 'data_atualizada'): ?><strong>Sucesso!</strong> Período de exibição atualizado!
+            <?php elseif ($_GET['sucesso'] == 'config_salva'): ?><strong>Sucesso!</strong> Configurações do portal atualizadas!
             <?php endif; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -35,6 +49,37 @@ $db_metricas = new Banco();
 
     <div class="row g-4">
         <div class="col-md-4">
+            <!-- BLOCO DE CONFIGURAÇÕES GERAIS DO PORTAL (OTIMIZADO E COMPACTO) -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-secondary text-white fw-bold"><i class="fa-solid fa-sliders"></i> Configurações do Portal</div>
+                <div class="card-body p-3">
+                    <form action="/admin/anuncio/salvar-configuracoes" method="POST">
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Anúncio (Seg)</label>
+                                <input type="number" name="tempo_anuncio" class="form-control form-control-sm" value="<?= $tempo_anuncio ?>" min="5" max="300" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold mb-1">Carência (Min)</label>
+                                <input type="number" name="tempo_limite" class="form-control form-control-sm" value="<?= $tempo_limite ?>" min="0" max="1440" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 d-flex align-items-center justify-content-between border rounded p-2 bg-white">
+                            <div>
+                                <label class="form-label small fw-bold mb-0">Anúncio Pós-Pago</label>
+                                <div class="text-muted" style="font-size: 0.72rem;">Banner passivo na tela de sucesso</div>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" name="exibir_ad_pos_pago" value="passivo" id="switch_pos_pago" <?= $exibir_ad_pos_pago === 'passivo' ? 'checked' : '' ?>>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-secondary btn-sm w-100 fw-bold">Salvar Configurações</button>
+                    </form>
+                </div>
+            </div>
+
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-dark text-white fw-bold"><i class="fa-solid fa-user-plus"></i> Novo Anunciante</div>
                 <div class="card-body">
@@ -135,7 +180,6 @@ $db_metricas = new Banco();
                                     $is_ativo = $ad['exibir'] === 'sim';
                                     $caminho = htmlspecialchars($ad['caminho_arquivo']);
                                     $local = htmlspecialchars($ad['localizacao'] ?? 'todos');
-                                    // Prepara o valor no formato que o input type number entende (ex: 50.00)
                                     $valor_formatado = number_format($ad['valor_pacote'] / 100, 2, '.', '');
                                     ?>
                                     <div class="col-6 col-md-6 col-lg-4">
@@ -180,8 +224,6 @@ $db_metricas = new Banco();
         </div>
     </div>
 </div>
-
-<!-- MODAL NOVO LOCAL REMOVIDO: AGORA É GERENCIADO EM /admin/roteadores -->
 
 <!-- MODAL: Editar Anúncio (Link, Local e VALOR PAGO) -->
 <div class="modal fade" id="modalEditarAnuncio" tabindex="-1">

@@ -1,6 +1,19 @@
---- LOG LIMPO EM 11/07/2026 00:15:44 ---
-2026-07-11 09:38:43 - FALHA CRÍTICA DE REDE: Could not resolve host: api.deboananet.club | Tentando acessar: https://api.deboananet.club:8080/rest/ip/hotspot/active
-2026-07-11 18:12:01 - FALHA CRÍTICA DE REDE:  | Tentando acessar: https://:8083/rest/ip/hotspot/active
-2026-07-11 18:12:01 - FALHA CRÍTICA DE REDE:  | Tentando acessar: https://:8083/rest/ip/hotspot/active
-2026-07-11 18:15:29 - FALHA CRÍTICA DE REDE:  | Tentando acessar: https://:8083/rest/ip/hotspot/active
-2026-07-11 18:15:29 - FALHA CRÍTICA DE REDE:  | Tentando acessar: https://:8083/rest/ip/hotspot/active
+--- LOG LIMPO EM 11/07/2026 21:51:52 ---
+2026-07-11 22:37:50 - RECEBEU WEBHOOK: {"resource":"168412892568","topic":"payment"}
+2026-07-11 22:37:50 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168412892568"},"date_created":"2026-07-12T01:37:49Z","id":134735176126,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-11 22:38:15 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168412892568"},"date_created":"2026-07-12T01:37:49Z","id":134735163532,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-11 22:38:15 - RECEBEU WEBHOOK: {"resource":"168412892568","topic":"payment"}
+2026-07-11 22:38:15 - Iniciando liberação para MAC: 5C:F9:38:11:34:65 no roteador: sobral
+2026-07-11 22:38:16 - AVISO: Transação 168412892568 ignorada. Já processada anteriormente.
+2026-07-11 22:38:18 - SUCESSO: Tempo acumulado/liberado no Roteador (sobral).
+2026-07-12 00:03:27 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168419520464"},"date_created":"2026-07-12T03:03:26Z","id":134737599154,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-12 00:03:27 - RECEBEU WEBHOOK: {"resource":"168419520464","topic":"payment"}
+2026-07-12 00:13:23 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168418627564"},"date_created":"2026-07-12T03:13:23Z","id":134588796797,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-12 00:13:23 - RECEBEU WEBHOOK: {"resource":"168418627564","topic":"payment"}
+2026-07-12 00:13:44 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168418627564"},"date_created":"2026-07-12T03:13:23Z","id":134737927868,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-12 00:13:44 - RECEBEU WEBHOOK: {"resource":"168418627564","topic":"payment"}
+2026-07-12 00:13:45 - Iniciando liberação para MAC: 5C:F9:38:11:22:33 no roteador: fortaleza
+2026-07-12 00:13:45 - AVISO: Transação 168418627564 ignorada. Já processada anteriormente.
+2026-07-12 00:13:47 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-12 00:37:15 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168419520464"},"date_created":"2026-07-12T03:03:26Z","id":134738481638,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-12 00:37:15 - RECEBEU WEBHOOK: {"resource":"168419520464","topic":"payment"}

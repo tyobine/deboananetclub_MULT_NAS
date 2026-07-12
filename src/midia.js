@@ -1,7 +1,6 @@
-// src/midia.js
-
 (function () {
-    var tempoRestante = 15;
+    // Agora lê dinamicamente o valor do banco de dados injetado pela View (Fallback: 15)
+    var tempoRestante = (typeof window.tempoAnuncioGlobal !== 'undefined') ? parseInt(window.tempoAnuncioGlobal) : 15;
     var countdownElement = null;
     var btnLiberar = document.getElementById('btn-liberar');
     var statusBox = document.getElementById('status-box');
@@ -9,13 +8,12 @@
     var mediaElement = document.getElementById('ad-media');
     var spinner = document.getElementById('loading-spinner');
     var wppBox = document.getElementById('whatsapp-box');
-
     var wppInput = document.getElementById('whatsapp-input');
     var lgpdCheck = document.getElementById('lgpd-check');
-
     var btnSom = document.getElementById('btn-som');
     var progressBar = document.getElementById('video-progress');
     var tempoEsgotado = false;
+    var mediaCarregada = false;
 
     // Máscara do WhatsApp
     if (wppInput) {
@@ -36,7 +34,7 @@
         } else if (tempoEsgotado) {
             btnLiberar.setAttribute('disabled', 'true');
             btnLiberar.className = "btn btn-secondary btn-lg w-100 fw-bold";
-            btnLiberar.innerText = "Preencha os dados e aceite os termos";
+            btnLiberar.innerText = "Preencha os dados e acerte os termos";
         }
     }
 
@@ -71,13 +69,17 @@
     }
 
     function iniciarCronometro() {
+        if (mediaCarregada) return; // Trava de segurança para impedir múltiplas execuções
+        mediaCarregada = true;
+
         if (spinner) spinner.style.display = 'none';
         if (mediaElement) mediaElement.style.display = 'block';
         if (btnSom) btnSom.style.display = 'block';
         if (progressBar) progressBar.style.display = 'block';
 
         if (statusBox) {
-            statusBox.innerHTML = 'Assista por <span id="countdown">15</span> seg...';
+            // Ajustado para renderizar o tempo dinâmico também no texto da interface
+            statusBox.innerHTML = 'Assista por <span id="countdown">' + tempoRestante + '</span> seg...';
             countdownElement = document.getElementById('countdown');
         }
         if (btnLiberar) btnLiberar.innerText = "⏳ Assista ao anúncio...";
@@ -102,39 +104,41 @@
         }, 1000);
     }
 
+    // RESOLUÇÃO DE RACE CONDITION NO CARREGAMENTO DA MÍDIA (OTIMIZADO PARA HOTSPOT)
     if (mediaElement) {
-        var mediaCarregada = false;
-        var eventoCarregamento = mediaElement.tagName === 'VIDEO' ? 'canplaythrough' : 'load';
-
-        function onLoad() {
-            if (!mediaCarregada) {
-                mediaCarregada = true;
+        if (mediaElement.tagName === 'VIDEO') {
+            // Em vez de esperar 'canplaythrough' (baixar muito do vídeo), 
+            // liberamos o cronômetro no 'loadeddata' (baixou o primeiro frame)
+            if (mediaElement.readyState >= 2) { 
                 iniciarCronometro();
+            } else {
+                mediaElement.addEventListener('loadeddata', iniciarCronometro, { once: true });
+                mediaElement.addEventListener('playing', iniciarCronometro, { once: true });
             }
-        }
-
-        if (mediaElement.tagName !== 'VIDEO' && mediaElement.complete) {
-            onLoad();
-        } else if (mediaElement.tagName === 'VIDEO' && mediaElement.readyState >= 3) {
-            onLoad(); // readyState >= HAVE_FUTURE_DATA
         } else {
-            mediaElement.addEventListener(eventoCarregamento, onLoad);
+            // Verifica se a imagem já foi resolvida (cache do navegador)
+            if (mediaElement.complete && mediaElement.naturalHeight !== 0) {
+                iniciarCronometro();
+            } else {
+                mediaElement.addEventListener('load', iniciarCronometro, { once: true });
+                mediaElement.addEventListener('error', iniciarCronometro, { once: true });
+            }
         }
 
+        // Failsafe Agressivo: Reduzido de 6 para 2.5 segundos. 
+        // Se a rede estiver muito estrangulada, o cliente não pode ficar preso no spinner.
+        // O cronômetro precisa rodar para ele poder preencher os dados e liberar a rede.
         setTimeout(function () {
-            if (!mediaCarregada) {
-                mediaCarregada = true;
-                iniciarCronometro();
-            }
-        }, 6000);
+            if (!mediaCarregada) iniciarCronometro();
+        }, 2500);
     } else {
         iniciarCronometro();
     }
 
-    // INTERCEPTAÇÃO DO ENVIO (RESOLUÇÃO DO FALSO POSITIVO)
+    // INTERCEPTAÇÃO DO ENVIO PARA LOGIN INVISÍVEL
     if (formLiberar && btnLiberar) {
         formLiberar.addEventListener('submit', function (e) {
-            e.preventDefault(); // Impede o envio tradicional por página
+            e.preventDefault();
 
             if (wppInput.value.length < 14 || !lgpdCheck.checked) {
                 alert("Por favor, preencha o WhatsApp corretamente e aceite os termos.");
@@ -153,41 +157,37 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.sucesso === true) {
-                        // SUCESSO CONFIRMADO: Utilizador criado na aba Users do MikroTik.
-                        // CRIAMOS UM FORMULÁRIO POST INVISÍVEL PARA DRIBLAR O BLOQUEIO DE SEGURANÇA DOS NAVEGADORES
-
+                        // SUCESSO CONFIRMADO: Criação de form POST invisível para auto-login
                         var macCli = encodeURIComponent(data.mac);
-                        var urlSucesso = 'http://deboananet.club/sucesso?mac=' + macCli;
+                        var urlSucesso = window.location.origin + '/sucesso?mac=' + macCli;
 
                         var formLogin = document.createElement('form');
                         formLogin.method = 'POST';
                         formLogin.action = 'http://' + data.hotspot_ip + '/login';
+                        formLogin.style.display = 'none';
 
                         var inputUser = document.createElement('input');
                         inputUser.type = 'hidden';
                         inputUser.name = 'username';
-                        inputUser.value = data.mac; // Envia o MAC limpo
+                        inputUser.value = data.mac;
 
                         var inputPass = document.createElement('input');
                         inputPass.type = 'hidden';
                         inputPass.name = 'password';
-                        inputPass.value = data.mac; // Envia o MAC como senha limpo
+                        inputPass.value = data.mac;
 
                         var inputDst = document.createElement('input');
                         inputDst.type = 'hidden';
                         inputDst.name = 'dst';
                         inputDst.value = urlSucesso;
 
-                        // Anexa o formulário invisível à página e clica em enviar instantaneamente
                         formLogin.appendChild(inputUser);
                         formLogin.appendChild(inputPass);
                         formLogin.appendChild(inputDst);
                         document.body.appendChild(formLogin);
 
                         formLogin.submit();
-
                     } else {
-                        // SE FALHAR A COMUNICAÇÃO: Mostra caixa vermelha limpa integrada na interface
                         if (statusBox) {
                             statusBox.className = "alert alert-danger py-3 mb-3 text-center border border-danger shadow-sm";
                             statusBox.innerHTML = '<h6 class="fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Aviso da Rede</h6><small>' + (data.mensagem || "Falha de comunicação com a torre.") + '</small>';
@@ -198,7 +198,6 @@
                     }
                 })
                 .catch(error => {
-                    // SE O SERVIDOR CAIR OU HOUVER UMA DESCONEXÃO TOTAL
                     if (statusBox) {
                         statusBox.className = "alert alert-dark py-3 mb-3 text-center border shadow-sm";
                         statusBox.innerHTML = '<h6 class="fw-bold mb-1"><i class="fa-solid fa-wifi"></i> Torre Offline</h6><small>Não foi possível conectar. A torre parece estar sem energia ou internet.</small>';

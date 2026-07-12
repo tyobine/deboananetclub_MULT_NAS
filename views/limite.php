@@ -15,7 +15,7 @@
             <h2 class="text-danger fw-bold mb-3">⏳ Limite Atingido</h2>
             <p class="text-dark">Você já utilizou o plano grátis recentemente.</p>
             <div class="alert alert-danger py-2">
-                Aguarde mais <b><?= htmlspecialchars($min_restantes ?? 'alguns') ?> minutos</b> para usar o grátis novamente.
+                Aguarde mais <b><?php echo htmlspecialchars($min_restantes ?? 'alguns'); ?> minutos</b> para usar o grátis novamente.
             </div>
             <p class="text-muted small mb-4">Ou compre um plano pago para navegar agora mesmo com velocidade máxima!</p>
             <a href="/inicio" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm">Ver Planos Pagos</a>

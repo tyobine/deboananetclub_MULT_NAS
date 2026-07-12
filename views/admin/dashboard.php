@@ -5,7 +5,6 @@
         <h2><i class="fa-solid fa-gauge"></i> Dashboard Multi-NAS (Geral)</h2>
         <div class="d-flex gap-2">
             <span class="badge bg-primary p-2"><i class="fa-solid fa-user-shield"></i> Admin Logado</span>
-            <!-- Tag de Roteadores removida conforme solicitado -->
         </div>
     </div>
 
@@ -161,6 +160,10 @@
         fetch('/admin/api/dashboard-status')
             .then(response => response.json())
             .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
                 // Atualiza Clientes Ativos
                 document.getElementById('clientes-ativos-valor').innerHTML = data.clientesAtivos + ' <small class="text-muted fs-6">toda rede</small>';
                 
@@ -191,6 +194,7 @@
             .catch(error => {
                 document.getElementById('clientes-ativos-valor').innerHTML = '<span class="text-danger fs-5"><i class="fa-solid fa-circle-exclamation"></i> Erro</span>';
                 document.getElementById('roteadores-status-lista').innerHTML = '<div class="text-danger small">Falha ao carregar status.</div>';
+                console.error('Erro na requisição AJAX:', error);
             });
     });
 </script>

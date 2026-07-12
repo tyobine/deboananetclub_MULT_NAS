@@ -5,7 +5,7 @@ require_once __DIR__ . '/../models/banco.php';
 require_once __DIR__ . '/../models/MercadoPago.php';
 require_once __DIR__ . '/../models/mikrotik.php';
 require_once __DIR__ . '/../models/Roteador.php';
-require_once __DIR__ . '/../utils/rede.php'; // Utilitário de Rede
+require_once __DIR__ . '/../utils/rede.php';
 
 class Hotspot
 {
@@ -29,7 +29,7 @@ class Hotspot
             $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
         }
 
-        // 🛡️ CORREÇÃO TÉCNICA: Persistência do IP Local por Cookie (Evita quebra do Anti-Spoofing)
+        // CORREÇÃO TÉCNICA: Persistência do IP Local por Cookie (Evita quebra do Anti-Spoofing)
         $ip = '';
         if (!empty($ip_url)) {
             setcookie('ip_cliente', $ip_url, time() + (86400 * 30), "/");
@@ -57,7 +57,7 @@ class Hotspot
             }
         }
 
-        // 🚨 TRAVA DE SEGURANÇA: IMPEDIR COMPRA PELO 4G (Aceitando rede 10., 100., 172.16 e 192.168)
+        // TRAVA DE SEGURANÇA: IMPEDIR COMPRA PELO 4G (Aceitando rede local)
         if (empty($mac_url) && !preg_match('/^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/', $ip)) {
             require_once __DIR__ . '/../views/institucional.php';
             exit;
@@ -70,11 +70,8 @@ class Hotspot
             exit;
         }
 
-        $sessaoAtiva = null;
-        $tempoRestante = 0;
-
         if (!empty($mac)) {
-            // Busca a sessão pelo MAC e puxa também o IP de origem da compra
+            // Busca a sessão ativa do usuário (Gratuita ou Paga)
             $acesso = $db->getRow("
                 SELECT a.id, a.expira_em, a.ip_address, p.name as plano_nome 
                 FROM acessos_pix a
@@ -88,20 +85,33 @@ class Hotspot
                 $agora = time();
                 $expiracao = strtotime($acesso['expira_em']);
 
-                // 🛡️ SEGURANÇA: Trava Anti-Spoofing Corrigida (Agora compara os IPs Locais de forma consistente)
                 if ($acesso['ip_address'] !== $ip) {
                     $log = date('Y-m-d H:i:s') . " - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: $mac | IP Esperado: {$acesso['ip_address']} | IP Invasor: $ip\n";
                     file_put_contents(__DIR__ . '/../webhook_log.txt', $log, FILE_APPEND);
-
-                    $sessaoAtiva = null;
-                    $tempoRestante = 0;
                 }
-                // Se estiver tudo correto e o tempo for válido
+                // UX: Se o usuário caiu do Wi-Fi e o tempo (ex: 10 min) ainda não acabou, reconecta ele sem mostrar planos
                 elseif ($expiracao > $agora) {
-                    $sessaoAtiva = $acesso;
-                    $tempoRestante = $expiracao - $agora;
+                    $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+                    $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
+                    $urlSucesso = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso?mac=" . urlencode($mac);
+                    
+                    echo "<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Reconectando...</title></head>
+                    <body style='background:#f8f9fa;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;margin:0;'>
+                    <div style='text-align:center; padding: 20px;'>
+                        <div style='width: 3rem; height: 3rem; border: 4px solid #0d6efd; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem auto;'></div>
+                        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+                        <h2 style='color:#333; margin-bottom: 10px;'>Reconectando...</h2>
+                        <p style='color:#666;'>Você possui um plano ativo. Liberando o acesso...</p>
+                    </div>
+                    <form id='autoLoginForm' method='POST' action='http://{$mikrotikGateway}/login' style='display:none;'>
+                        <input type='hidden' name='username' value='{$mac}'>
+                        <input type='hidden' name='password' value='{$mac}'>
+                        <input type='hidden' name='dst' value='{$urlSucesso}'>
+                    </form>
+                    <script>setTimeout(function(){ document.getElementById('autoLoginForm').submit(); }, 1500);</script>
+                    </body></html>";
+                    exit;
                 }
-                // Se o tempo expirou
                 else {
                     $db->query("UPDATE acessos_pix SET status = 'expirado' WHERE id = ?", [$acesso['id']]);
                 }
@@ -169,20 +179,56 @@ class Hotspot
 
             if ($ultimoGratis && !empty($ultimoGratis['expira_em'])) {
                 date_default_timezone_set('America/Fortaleza');
-                $hora_liberacao = strtotime($ultimoGratis['expira_em']) + 3600;
+                $agora = time();
+                
+                // O momento exato em que os 10 minutos (duration_minutes) terminam
+                $expiracao = strtotime($ultimoGratis['expira_em']);
 
-                if (time() < $hora_liberacao) {
-                    $min_restantes = ceil(($hora_liberacao - time()) / 60);
+                // CENÁRIO 1: O PLANO AINDA ESTÁ ATIVO (O cliente voltou antes do tempo acabar)
+                if ($agora < $expiracao) {
+                    $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
+                    $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
+                    $urlSucesso = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso?mac=" . urlencode($mac);
+                    
+                    echo "<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Reconectando...</title></head>
+                    <body style='background:#f8f9fa;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;margin:0;'>
+                    <div style='text-align:center; padding: 20px;'>
+                        <div style='width: 3rem; height: 3rem; border: 4px solid #0d6efd; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem auto;'></div>
+                        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+                        <h2 style='color:#333; margin-bottom: 10px;'>Reconectando...</h2>
+                        <p style='color:#666;'>Você ainda tem tempo grátis. Liberando o acesso...</p>
+                    </div>
+                    <form id='autoLoginForm' method='POST' action='http://{$mikrotikGateway}/login' style='display:none;'>
+                        <input type='hidden' name='username' value='{$mac}'>
+                        <input type='hidden' name='password' value='{$mac}'>
+                        <input type='hidden' name='dst' value='{$urlSucesso}'>
+                    </form>
+                    <script>setTimeout(function(){ document.getElementById('autoLoginForm').submit(); }, 1500);</script>
+                    </body></html>";
+                    exit;
+                }
+
+                // CENÁRIO 2: O TEMPO DE USO ACABOU. INICIA A CARÊNCIA.
+                $carencia_bd = $db->getRow("SELECT valor FROM configuracoes WHERE chave = 'tempo_carencia'");
+                $minutos_carencia = $carencia_bd ? intval($carencia_bd['valor']) : 15;
+                
+                // A carência (ex: 15min) é somada em cima do momento que o plano expirou
+                $hora_liberacao_nova = $expiracao + ($minutos_carencia * 60);
+
+                // Se ainda está na janela de bloqueio
+                if ($agora < $hora_liberacao_nova) {
+                    $min_restantes = ceil(($hora_liberacao_nova - $agora) / 60);
                     require_once __DIR__ . '/../views/limite.php';
                     exit;
                 }
             }
 
+            // A carência acabou ou o usuário nunca usou plano grátis
             require_once __DIR__ . '/../views/publicidade.php';
             exit;
         }
 
-        // Lógica de Plano Pago (PIX)
+        // Lógica de Plano Pago (PIX) - Não tem bloqueio de carência, é imediato.
         $mp = new MercadoPago();
         $dadosPix = $mp->criarPix($plano['price_cents'], $mac, $ip, $plano_id, $plano['name'], $router_id);
 
@@ -240,34 +286,56 @@ class Hotspot
             exit;
         }
 
-        $jaExiste = $db->getRow("
-            SELECT id FROM acessos_pix 
-            WHERE mac_address = ? AND plano_id = ? AND status = 'ativo' AND expira_em > NOW()
+        // SEGURANÇA DA API: Validação rigorosa na linha de chegada
+        $ultimoGratis = $db->getRow("
+            SELECT expira_em, status FROM acessos_pix 
+            WHERE mac_address = ? AND plano_id = ? 
             ORDER BY id DESC LIMIT 1
         ", [$mac, $plano_id]);
 
-        if ($jaExiste) {
-            echo json_encode(['sucesso' => true, 'mensagem' => 'Já possui um plano ativo.', 'mac' => $mac]);
-            exit;
+        if ($ultimoGratis && !empty($ultimoGratis['expira_em'])) {
+            date_default_timezone_set('America/Fortaleza');
+            $agora = time();
+            $expiracao = strtotime($ultimoGratis['expira_em']);
+
+            // Tentou enviar o comando de liberação mesmo com o plano em uso?
+            if ($agora < $expiracao && $ultimoGratis['status'] === 'ativo') {
+                echo json_encode(['sucesso' => false, 'mensagem' => 'Você já possui um plano em uso no momento.']);
+                exit;
+            }
+
+            // O tempo de uso expirou, valida a carência dinamicamente
+            $carencia_bd = $db->getRow("SELECT valor FROM configuracoes WHERE chave = 'tempo_carencia'");
+            $minutos_carencia = $carencia_bd ? intval($carencia_bd['valor']) : 15;
+            $hora_liberacao_nova = $expiracao + ($minutos_carencia * 60);
+
+            // Tentou burlar a tela e disparar a API durante a carência?
+            if ($agora < $hora_liberacao_nova) {
+                $min_restantes = ceil(($hora_liberacao_nova - $agora) / 60);
+                echo json_encode(['sucesso' => false, 'mensagem' => "Acesso negado. Aguarde {$min_restantes} minutos de carência."]);
+                exit;
+            }
         }
 
         $txid_gratis = "PUB-" . time() . "-" . rand(1000, 9999);
         date_default_timezone_set('America/Fortaleza');
-        $expiracao = date('Y-m-d H:i:s', strtotime("+" . $plano['duration_minutes'] . " minutes"));
+        
+        // Define dinamicamente o tempo que o cliente vai usar, baseado no plano criado.
+        $minutos_do_plano = intval($plano['duration_minutes']);
+        $expiracao_calculada = date('Y-m-d H:i:s', strtotime("+{$minutos_do_plano} minutes"));
 
         $db->query("
             INSERT INTO acessos_pix (txid, status, ip_address, mac_address, whatsapp, plano_id, expira_em, router_id) 
             VALUES (?, 'processando', ?, ?, ?, ?, ?, ?)
-        ", [$txid_gratis, $ip, $mac, $whatsapp_numero, $plano_id, $expiracao, $router_id]);
+        ", [$txid_gratis, $ip, $mac, $whatsapp_numero, $plano_id, $expiracao_calculada, $router_id]);
 
         try {
             $mk = new Mikrotik($router_id);
-            $liberouNoRouter = $mk->liberarAcessoTempo($mac, intval($plano['duration_minutes']), 'plano_gratis');
+            $liberouNoRouter = $mk->liberarAcessoTempo($mac, $minutos_do_plano, 'plano_gratis');
 
             if ($liberouNoRouter) {
                 $db->query("UPDATE acessos_pix SET status = 'ativo' WHERE txid = ?", [$txid_gratis]);
 
-                // 🚀 ADICIONADO: Pega o IP do roteador local para mandar para o JavaScript fazer o login
                 $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
                 $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
 
