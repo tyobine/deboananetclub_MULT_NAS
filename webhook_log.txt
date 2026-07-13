@@ -1,1 +1,5 @@
 --- LOG LIMPO EM 12/07/2026 16:42:11 ---
+2026-07-12 22:08:19 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168526201564"},"date_created":"2026-07-13T01:08:18Z","id":134630358177,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-12 22:08:19 - RECEBEU WEBHOOK: {"resource":"168526201564","topic":"payment"}
+2026-07-12 22:42:07 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168526201564"},"date_created":"2026-07-13T01:08:18Z","id":134631547375,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-12 22:42:07 - RECEBEU WEBHOOK: {"resource":"168526201564","topic":"payment"}
