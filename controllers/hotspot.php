@@ -258,6 +258,10 @@ class Hotspot
         $plano_id = $_REQUEST['plan_id'] ?? null;
         $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
         $ip = $_REQUEST['ip'] ?? '';
+        
+        // Coleta de dados adicionais do fluxo de anúncios retidos
+        $anuncio_id_clicado = isset($_REQUEST['anuncio_id_clicado']) ? (int)$_REQUEST['anuncio_id_clicado'] : 0;
+        $url_redirecionamento_final = $_REQUEST['url_redirecionamento_final'] ?? '';
 
         $modeloRoteador = new Roteador();
         $padraoRoteador = $modeloRoteador->obterPadrao();
@@ -329,6 +333,16 @@ class Hotspot
             VALUES (?, 'processando', ?, ?, ?, ?, ?, ?)
         ", [$txid_gratis, $ip, $mac, $whatsapp_numero, $plano_id, $expiracao_calculada, $router_id]);
 
+        // CASO O USUÁRIO TENHA CLICADO NO ANÚNCIO: Computa a métrica no banco antes de liberar a rede
+        if ($anuncio_id_clicado > 0 && !empty($url_redirecionamento_final)) {
+            try {
+                $db->query("INSERT INTO cliques_anuncio (mac_address, url_destino, data_clique) VALUES (?, ?, NOW())", [$mac, $url_redirecionamento_final]);
+                $db->query("UPDATE crm_anuncios SET cliques = cliques + 1 WHERE id = ?", [$anuncio_id_clicado]);
+            } catch (\Throwable $th) {
+                // Silencia falhas de log de clique para priorizar a UX de conexão
+            }
+        }
+
         try {
             $mk = new Mikrotik($router_id);
             $liberouNoRouter = $mk->liberarAcessoTempo($mac, $minutos_do_plano, 'plano_gratis');
@@ -339,11 +353,17 @@ class Hotspot
                 $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
                 $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
 
+                // Fallback de destino de navegação se não houver clique retido no anúncio
+                if (empty($url_redirecionamento_final)) {
+                    $url_redirecionamento_final = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso?mac=" . urlencode($mac);
+                }
+
                 echo json_encode([
                     'sucesso' => true,
                     'mensagem' => 'Acesso libertado!',
                     'mac' => $mac,
-                    'hotspot_ip' => $mikrotikGateway
+                    'hotspot_ip' => $mikrotikGateway,
+                    'redirecionar_para' => $url_redirecionamento_final // Repassa a URL final desejada ao JS do Front
                 ]);
                 exit;
             } else {

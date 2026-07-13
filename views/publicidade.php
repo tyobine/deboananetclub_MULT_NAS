@@ -79,7 +79,8 @@ else {
                         </div>
                     </div>
 
-                    <a href="<?= $anuncio_id > 0 ? "/clique?id={$anuncio_id}" : $link_destino ?>" <?= $link_destino !== '#' ? 'target="_blank"' : 'onclick="return false;"' ?> style="display: block; width: 100%; text-decoration: none; position: relative; z-index: 20;">
+                    <!-- Interceptação de clique via JavaScript para reter o fluxo sem abrir nova aba imediatamente -->
+                    <a href="#" onclick="marcarInteresseAnuncio(event, '<?= $anuncio_id ?>', '<?= htmlspecialchars($link_destino) ?>')" style="display: block; width: 100%; text-decoration: none; position: relative; z-index: 20;">
                         <?php if ($tipo_anuncio === 'video'): ?>
                             <video id="ad-media" autoplay muted playsinline loop style="display: none; cursor: pointer; width: 100%; border-radius: 8px;">
                                 <source src="<?= $link_midia ?>" type="video/mp4">
@@ -99,11 +100,15 @@ else {
                     A carregar os detalhes do parceiro...
                 </div>
 
-                <form method="POST" action="/liberar-gratis-confirmado">
+                <form id="form-liberacao-gratis" method="POST" action="/liberar-gratis-confirmado">
                     <input type="hidden" name="plan_id" value="<?php echo htmlspecialchars($plano_id ?? ''); ?>">
                     <input type="hidden" name="mac" value="<?php echo htmlspecialchars($mac ?? $_GET['mac'] ?? ''); ?>">
                     <input type="hidden" name="ip" value="<?php echo htmlspecialchars($ip ?? $_GET['ip'] ?? ''); ?>">
                     <input type="hidden" name="router" value="<?php echo htmlspecialchars($roteador_atual); ?>">
+                    
+                    <!-- Inputs ocultos para rastreamento de clique retido -->
+                    <input type="hidden" name="anuncio_id_clicado" id="anuncio_id_clicado" value="0">
+                    <input type="hidden" name="url_redirecionamento_final" id="url_redirecionamento_final" value="">
 
                     <div class="text-start mb-3" id="whatsapp-box" style="display: none;">
                         <label class="form-label small fw-bold text-secondary mb-1">Para liberar a internet, informe o seu WhatsApp:</label>
@@ -126,8 +131,21 @@ else {
     </div>
 
     <script>
-        // Injeta o tempo dinâmico vindo diretamente do banco de dados para ser interceptado pelo arquivo midia.js
         window.tempoAnuncioGlobal = <?= $tempo_anuncio ?>;
+
+        function marcarInteresseAnuncio(event, id, urlDestino) {
+            event.preventDefault();
+            if(!id || id === '0' || urlDestino === '#') return;
+
+            // Armazena a intenção de redirecionamento nos inputs ocultos seguros do formulário
+            document.getElementById('anuncio_id_clicado').value = id;
+            document.getElementById('url_redirecionamento_final').value = urlDestino;
+
+            // Altera visualmente a caixa de status notificando o usuário sem alterar o layout CSS
+            let statusBox = document.getElementById('status-box');
+            statusBox.className = "alert alert-success py-2 mb-2 fw-bold";
+            statusBox.innerText = "Você será redirecionado para o anúncio ao liberar o Wi-Fi.";
+        }
     </script>
     <script src="/src/midia.js?v=<?php echo time(); ?>"></script>
 
