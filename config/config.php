@@ -13,6 +13,8 @@ define('DB_USER', 'moveisjb_hotspot_db');
 define('DB_PASS', 'vtgd65aoty');
 
 // Os roteadores agora são gerenciados pelo banco de dados (tabela crm_roteadores)
+// Fallback usado quando o router_id da transação está vazio (ex: registros antigos)
+define('ROUTER_DEFAULT', 'sobral');
 
 // =========================================================================
 // 3. CREDENCIAIS DE ACESSO AO PAINEL ADMINISTRATIVO

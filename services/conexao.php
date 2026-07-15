@@ -8,13 +8,23 @@ class Conexao
 {
     private $db;
 
+    // Número máximo de tentativas antes de desistir e acionar o estorno
+    const MAX_TENTATIVAS = 3;
+
+    // Segundos de espera entre cada tentativa (evita sobrecarregar um roteador instável)
+    const ESPERA_ENTRE_TENTATIVAS = 2;
+
     public function __construct()
     {
         $this->db = new Banco();
     }
 
     /**
-     * Calcula o tempo, acumula se necessário e libera o MAC no MikroTik da cidade correspondente
+     * Calcula o tempo, acumula se necessário e libera o MAC no MikroTik da cidade correspondente.
+     *
+     * Implementa retry automático (MAX_TENTATIVAS) para absorver instabilidades temporárias
+     * de rede, evitando estornos desnecessários por falha pontual de comunicação.
+     * O estorno só é acionado se TODAS as tentativas falharem.
      */
     public function processarLiberacao($txid, $mac, $plano_id, $router_id = ROUTER_DEFAULT)
     {
@@ -45,14 +55,54 @@ class Conexao
 
         $expira_em = date('Y-m-d H:i:s', $tempoBaseParaCalculo + ($minutosComprados * 60));
 
-        // Inicia a conexão com o MikroTik EXATO de onde veio o pagamento
-        $mk = new Mikrotik($router_id);
+        // ============================================================
+        // RETRY: Tenta comunicar com o MikroTik até MAX_TENTATIVAS vezes.
+        // Isso absorve instabilidades momentâneas de rede (ex: spike de
+        // latência, reinicialização parcial do roteador) sem acionar o
+        // estorno automático prematuramente.
+        // ============================================================
+        $tentativa = 0;
+        $ultimoErro = '';
 
-        if ($mk->liberarAcessoTempo($mac, $minutosTotais)) {
-            $this->db->query("UPDATE acessos_pix SET status = 'ativo', expira_em = ? WHERE txid = ?", [$expira_em, $txid]);
-            return true;
+        while ($tentativa < self::MAX_TENTATIVAS) {
+            $tentativa++;
+
+            try {
+                $mk = new Mikrotik($router_id);
+                $liberou = $mk->liberarAcessoTempo($mac, $minutosTotais);
+
+                if ($liberou) {
+                    // Sucesso! Atualiza o banco e retorna true.
+                    if ($tentativa > 1) {
+                        $log = date('Y-m-d H:i:s') . " - ✅ RETRY SUCESSO na tentativa {$tentativa}/{" . self::MAX_TENTATIVAS . "} para MAC: $mac (router: $router_id)\n";
+                        @file_put_contents(__DIR__ . '/../webhook_log.txt', $log, FILE_APPEND);
+                    }
+                    $this->db->query("UPDATE acessos_pix SET status = 'ativo', expira_em = ? WHERE txid = ?", [$expira_em, $txid]);
+                    return true;
+                }
+
+                // Roteador respondeu mas recusou (ex: usuário já existe, erro de API)
+                // Não adianta ficar tentando: retorna false imediatamente.
+                $log = date('Y-m-d H:i:s') . " - ⚠️ ROTEADOR RECUSOU (não é timeout) na tentativa {$tentativa} para MAC: $mac (router: $router_id). Abortando retries.\n";
+                @file_put_contents(__DIR__ . '/../webhook_log.txt', $log, FILE_APPEND);
+                return false;
+
+            } catch (\Throwable $e) {
+                // Falha de rede/timeout — vale tentar de novo
+                $ultimoErro = $e->getMessage();
+                $log = date('Y-m-d H:i:s') . " - 🔄 RETRY {$tentativa}/" . self::MAX_TENTATIVAS . " | MAC: $mac | Router: $router_id | Erro: {$ultimoErro}\n";
+                @file_put_contents(__DIR__ . '/../webhook_log.txt', $log, FILE_APPEND);
+
+                if ($tentativa < self::MAX_TENTATIVAS) {
+                    sleep(self::ESPERA_ENTRE_TENTATIVAS);
+                }
+            }
         }
 
-        return false;
+        // Todas as tentativas esgotadas — relança como Exception para que
+        // o webhook.php capture e acione o estorno automático com log completo.
+        throw new \RuntimeException(
+            "Roteador {$router_id} inacessível após " . self::MAX_TENTATIVAS . " tentativas. Último erro: {$ultimoErro}"
+        );
     }
 }

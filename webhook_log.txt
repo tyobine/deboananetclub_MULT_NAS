@@ -5,3 +5,49 @@
 2026-07-12 22:42:07 - RECEBEU WEBHOOK: {"resource":"168526201564","topic":"payment"}
 2026-07-13 04:40:56 - RECEBEU WEBHOOK: {"resource":"168241238330","topic":"payment"}
 2026-07-13 04:40:57 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168241238330"},"date_created":"2026-07-11T00:02:44Z","id":134638778827,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-13 18:58:00 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"167797342881"},"date_created":"2026-07-13T21:58:00Z","id":134820559862,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-13 18:58:00 - RECEBEU WEBHOOK: {"resource":"167797342881","topic":"payment"}
+2026-07-13 19:32:53 - RECEBEU WEBHOOK: {"resource":"167797342881","topic":"payment"}
+2026-07-13 19:32:53 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"167797342881"},"date_created":"2026-07-13T21:58:00Z","id":134822519834,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-13 19:41:41 - RECEBEU WEBHOOK: {"resource":"167806030557","topic":"payment"}
+2026-07-13 19:41:41 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"167806030557"},"date_created":"2026-07-13T22:41:41Z","id":134823002590,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-13 20:15:48 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"167806030557"},"date_created":"2026-07-13T22:41:41Z","id":134675339957,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-13 20:15:48 - RECEBEU WEBHOOK: {"resource":"167806030557","topic":"payment"}
+2026-07-14 19:06:29 - FALHA CRÍTICA DE REDE: Connection timed out after 5000 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-14 19:07:12 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"167956061809"},"date_created":"2026-07-14T22:07:11Z","id":134870286648,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:07:12 - RECEBEU WEBHOOK: {"resource":"167956061809","topic":"payment"}
+2026-07-14 19:07:58 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"167956061809"},"date_created":"2026-07-14T22:07:11Z","id":134720768913,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:07:58 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-14 19:07:59 - RECEBEU WEBHOOK: {"resource":"167956061809","topic":"payment"}
+2026-07-14 19:07:59 - AVISO: Transação 167956061809 ignorada. Já processada anteriormente.
+2026-07-14 19:08:03 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-14 19:08:03 - ❌ ERRO FATAL: Falha na requisição cURL: Connection timed out after 5001 milliseconds
+2026-07-14 19:09:19 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"167956016043"},"date_created":"2026-07-14T22:09:19Z","id":134870412518,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:09:19 - RECEBEU WEBHOOK: {"resource":"167956016043","topic":"payment"}
+2026-07-14 19:10:00 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"167956016043"},"date_created":"2026-07-14T22:09:19Z","id":134870466614,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:10:00 - RECEBEU WEBHOOK: {"resource":"167956016043","topic":"payment"}
+2026-07-14 19:10:00 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-14 19:10:00 - AVISO: Transação 167956016043 ignorada. Já processada anteriormente.
+2026-07-14 19:10:05 - FALHA CRÍTICA DE REDE: Connection timed out after 5000 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-14 19:10:05 - ❌ ERRO FATAL: Falha na requisição cURL: Connection timed out after 5000 milliseconds
+2026-07-14 19:11:41 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-14 19:14:13 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168824412552"},"date_created":"2026-07-14T22:14:13Z","id":134870591062,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:14:13 - RECEBEU WEBHOOK: {"resource":"168824412552","topic":"payment"}
+2026-07-14 19:25:59 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168824412552"},"date_created":"2026-07-14T22:14:13Z","id":134721671405,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:26:00 - RECEBEU WEBHOOK: {"resource":"168824412552","topic":"payment"}
+2026-07-14 19:26:00 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-14 19:26:00 - AVISO: Transação 168824412552 ignorada. Já processada anteriormente.
+2026-07-14 19:26:02 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-14 19:26:29 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-14 19:26:57 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-14 19:27:04 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-14 19:27:07 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-14 19:27:11 - RECEBEU WEBHOOK: {"resource":"167962256419","topic":"payment"}
+2026-07-14 19:27:11 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"167962256419"},"date_created":"2026-07-14T22:27:11Z","id":134871396026,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 19:27:14 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-14 20:00:37 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"167962256419"},"date_created":"2026-07-14T22:27:11Z","id":134723417963,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-14 20:00:38 - RECEBEU WEBHOOK: {"resource":"167962256419","topic":"payment"}
+2026-07-15 11:33:16 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 11:33:22 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 11:33:50 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 11:34:07 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253

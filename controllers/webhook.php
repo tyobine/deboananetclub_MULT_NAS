@@ -77,16 +77,27 @@ class Webhook
                         if ($stmt->rowCount() > 0) {
                             $this->log("Iniciando liberação para MAC: $mac no roteador: $router_id");
 
-                            $sucesso = $conexaoService->processarLiberacao($txid, $mac, $plano_id, $router_id);
+                            // ============================================================
+                            // BLOCO CRÍTICO: Qualquer falha (retorno false OU exception)
+                            // deve acionar o estorno automático para proteger o cliente.
+                            // ============================================================
+                            try {
+                                $sucesso = $conexaoService->processarLiberacao($txid, $mac, $plano_id, $router_id);
 
-                            if ($sucesso) {
-                                // SÓ ATIVA SE A REQUISIÇÃO AO MIKROTIK TIVER SUCESSO
-                                $db->query("UPDATE acessos_pix SET status = 'ativo' WHERE txid = ?", [$txid]);
-                                $this->log("SUCESSO: Tempo acumulado/liberado no Roteador ($router_id).");
-                            } else {
-                                // FALHA NA TORRE: MARCA ERRO MIKROTIK PARA SINALIZAR O CELULAR DO CLIENTE
+                                if ($sucesso) {
+                                    // SÓ ATIVA SE A REQUISIÇÃO AO MIKROTIK TIVER SUCESSO
+                                    $db->query("UPDATE acessos_pix SET status = 'ativo' WHERE txid = ?", [$txid]);
+                                    $this->log("SUCESSO: Tempo acumulado/liberado no Roteador ($router_id).");
+                                } else {
+                                    // FALHA NA TORRE (retornou false): MARCA ERRO E ESTORNA
+                                    $db->query("UPDATE acessos_pix SET status = 'erro_mikrotik' WHERE txid = ?", [$txid]);
+                                    $this->log("FALHA: Roteador ($router_id) retornou erro. Iniciando Estorno automático...");
+                                    $pixService->devolverValor($txid);
+                                }
+                            } catch (\Throwable $errMk) {
+                                // FALHA NA TORRE (exception de rede/timeout): MARCA ERRO E ESTORNA
                                 $db->query("UPDATE acessos_pix SET status = 'erro_mikrotik' WHERE txid = ?", [$txid]);
-                                $this->log("FALHA: Roteador ($router_id) inacessível. Iniciando Estorno automático...");
+                                $this->log("FALHA (Exception): Roteador ($router_id) inacessível — " . $errMk->getMessage() . ". Iniciando Estorno automático...");
                                 $pixService->devolverValor($txid);
                             }
                         } else {
@@ -98,7 +109,7 @@ class Webhook
                 }
             }
         } catch (\Throwable $e) {
-            $this->log("❌ ERRO FATAL: " . $e->getMessage());
+            $this->log("❌ ERRO FATAL (externo): " . $e->getMessage());
         }
     }
 }
