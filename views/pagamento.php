@@ -78,7 +78,7 @@
                             </div>`;
 
                         const mac = encodeURIComponent(data.mac);
-                        const destinoFinal = encodeURIComponent(`https://deboananet.club/inicio?mac=${data.mac}`);
+                        const destinoFinal = encodeURIComponent(window.location.origin + '/inicio?mac=' + data.mac);
 
                         // Resgata o gateway de hotspot que configuramos no config.php para esta cidade
                         <?php
@@ -87,6 +87,7 @@
                         ?>
                         const mikrotikGateway = "<?php echo $gatewayIp; ?>";
 
+                        // Autentica no MikroTik via GET e redireciona para o cronômetro
                         window.location.href = `http://${mikrotikGateway}/login?username=${mac}&password=${mac}&dst=${destinoFinal}`;
 
                     } else if (data.status === 'estornado') {

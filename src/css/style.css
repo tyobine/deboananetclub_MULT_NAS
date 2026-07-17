@@ -123,7 +123,16 @@ body.pagina-institucional {
 /* ==========================================================================
    PÁGINAS ADICIONAIS (Publicidade, Sucesso, Limite, Expirado, Pix)
    ========================================================================== */
-.ad-container {
+body.pagina-pub {
+    background: linear-gradient(135deg, #0575E6 0%, #021B79 100%) !important;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+
+   .ad-container {
     max-width: 500px;
     width: 100%;
     margin: 0 auto;

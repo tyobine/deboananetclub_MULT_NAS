@@ -51,3 +51,267 @@
 2026-07-15 11:33:22 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
 2026-07-15 11:33:50 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
 2026-07-15 11:34:07 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 15:37:23 - RECEBEU WEBHOOK: {"resource":"168092494177","topic":"payment"}
+2026-07-15 15:37:23 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168092494177"},"date_created":"2026-07-15T18:37:22Z","id":134910566222,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:38:16 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-15 15:38:31 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168092494177"},"date_created":"2026-07-15T18:37:22Z","id":134760930013,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:38:31 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 15:38:31 - RECEBEU WEBHOOK: {"resource":"168092494177","topic":"payment"}
+2026-07-15 15:38:31 - AVISO: Transação 168092494177 ignorada. Já processada anteriormente.
+2026-07-15 15:38:36 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-15 15:38:36 - 🔄 RETRY 1/3 | MAC: B6:57:3B:04:9A:D8 | Router: fortaleza | Erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds
+2026-07-15 15:38:43 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-15 15:38:43 - 🔄 RETRY 2/3 | MAC: B6:57:3B:04:9A:D8 | Router: fortaleza | Erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds
+2026-07-15 15:38:50 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-15 15:38:50 - 🔄 RETRY 3/3 | MAC: B6:57:3B:04:9A:D8 | Router: fortaleza | Erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds
+2026-07-15 15:38:50 - FALHA (Exception): Roteador (fortaleza) inacessível — Roteador fortaleza inacessível após 3 tentativas. Último erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds. Iniciando Estorno automático...
+2026-07-15 15:38:53 - RECEBEU WEBHOOK: {"resource":"168092494177","topic":"payment"}
+2026-07-15 15:39:00 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168092494177"},"date_created":"2026-07-15T18:37:22Z","id":134910591484,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:39:00 - RECEBEU WEBHOOK: {"resource":"168092494177","topic":"payment"}
+2026-07-15 15:39:28 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168956728018"},"date_created":"2026-07-15T18:39:27Z","id":134760888913,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:39:28 - RECEBEU WEBHOOK: {"resource":"168956728018","topic":"payment"}
+2026-07-15 15:40:06 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168956932022"},"date_created":"2026-07-15T18:40:06Z","id":134760980161,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:40:06 - RECEBEU WEBHOOK: {"resource":"168956932022","topic":"payment"}
+2026-07-15 15:40:30 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168956932022"},"date_created":"2026-07-15T18:40:06Z","id":134761002191,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:40:30 - RECEBEU WEBHOOK: {"resource":"168956932022","topic":"payment"}
+2026-07-15 15:40:30 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 15:40:30 - AVISO: Transação 168956932022 ignorada. Já processada anteriormente.
+2026-07-15 15:40:35 - FALHA CRÍTICA DE REDE: Connection timed out after 5000 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-15 15:40:35 - 🔄 RETRY 1/3 | MAC: B6:57:3B:04:9A:D8 | Router: fortaleza | Erro: Falha na requisição cURL: Connection timed out after 5000 milliseconds
+2026-07-15 15:40:42 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-15 15:40:42 - 🔄 RETRY 2/3 | MAC: B6:57:3B:04:9A:D8 | Router: fortaleza | Erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds
+2026-07-15 15:40:49 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active?mac-address=B6:57:3B:04:9A:D8
+2026-07-15 15:40:49 - 🔄 RETRY 3/3 | MAC: B6:57:3B:04:9A:D8 | Router: fortaleza | Erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds
+2026-07-15 15:40:49 - FALHA (Exception): Roteador (fortaleza) inacessível — Roteador fortaleza inacessível após 3 tentativas. Último erro: Falha na requisição cURL: Connection timed out after 5001 milliseconds. Iniciando Estorno automático...
+2026-07-15 15:40:52 - RECEBEU WEBHOOK: {"resource":"168956932022","topic":"payment"}
+2026-07-15 15:40:57 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168956932022"},"date_created":"2026-07-15T18:40:06Z","id":134910716800,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:40:57 - RECEBEU WEBHOOK: {"resource":"168956932022","topic":"payment"}
+2026-07-15 15:41:14 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168092772465"},"date_created":"2026-07-15T18:41:14Z","id":134760909537,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:41:14 - RECEBEU WEBHOOK: {"resource":"168092772465","topic":"payment"}
+2026-07-15 15:41:49 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168092772465"},"date_created":"2026-07-15T18:41:14Z","id":134910727368,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 15:41:49 - RECEBEU WEBHOOK: {"resource":"168092772465","topic":"payment"}
+2026-07-15 15:41:49 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 15:41:49 - AVISO: Transação 168092772465 ignorada. Já processada anteriormente.
+2026-07-15 15:41:51 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 15:42:26 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 15:42:31 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 16:16:08 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168956728018"},"date_created":"2026-07-15T18:39:27Z","id":134912195608,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 16:16:33 - RECEBEU WEBHOOK: {"resource":"168956728018","topic":"payment"}
+2026-07-15 16:16:48 - RECEBEU WEBHOOK: {"resource":"168956728018","topic":"payment"}
+2026-07-15 17:33:20 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 17:34:21 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168106833329"},"date_created":"2026-07-15T20:34:20Z","id":134765114735,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 17:34:21 - RECEBEU WEBHOOK: {"resource":"168106833329","topic":"payment"}
+2026-07-15 17:37:45 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168106833329"},"date_created":"2026-07-15T20:34:20Z","id":134915010624,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 17:37:45 - RECEBEU WEBHOOK: {"resource":"168106833329","topic":"payment"}
+2026-07-15 17:37:45 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 17:37:45 - AVISO: Transação 168106833329 ignorada. Já processada anteriormente.
+2026-07-15 17:37:47 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 17:48:50 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168109508843"},"date_created":"2026-07-15T20:48:50Z","id":134915266826,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 17:48:50 - RECEBEU WEBHOOK: {"resource":"168109508843","topic":"payment"}
+2026-07-15 17:48:58 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168976742686"},"date_created":"2026-07-15T20:48:58Z","id":134915314498,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 17:48:58 - RECEBEU WEBHOOK: {"resource":"168976742686","topic":"payment"}
+2026-07-15 17:49:33 - RECEBEU WEBHOOK: {"resource":"168109508907","topic":"payment"}
+2026-07-15 17:49:33 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168109508907"},"date_created":"2026-07-15T20:49:33Z","id":134915282876,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 18:21:52 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168109508907"},"date_created":"2026-07-15T20:49:33Z","id":134916470110,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 18:21:53 - RECEBEU WEBHOOK: {"resource":"168109508907","topic":"payment"}
+2026-07-15 18:22:59 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168109508843"},"date_created":"2026-07-15T20:48:50Z","id":134916471434,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 18:22:59 - RECEBEU WEBHOOK: {"resource":"168109508843","topic":"payment"}
+2026-07-15 18:23:01 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168976742686"},"date_created":"2026-07-15T20:48:58Z","id":134766703447,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 18:23:02 - RECEBEU WEBHOOK: {"resource":"168976742686","topic":"payment"}
+2026-07-15 19:14:49 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 19:26:09 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168124082547"},"date_created":"2026-07-15T22:26:09Z","id":134769257857,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 19:26:09 - RECEBEU WEBHOOK: {"resource":"168124082547","topic":"payment"}
+2026-07-15 19:30:26 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.253 | IP Invasor: 10.50.0.254
+2026-07-15 19:30:29 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168123417557"},"date_created":"2026-07-15T22:30:29Z","id":134919317480,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 19:30:29 - RECEBEU WEBHOOK: {"resource":"168123417557","topic":"payment"}
+2026-07-15 19:31:01 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.253 | IP Invasor: 10.50.0.254
+2026-07-15 19:31:21 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168123637509"},"date_created":"2026-07-15T22:31:20Z","id":134769682129,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 19:31:21 - RECEBEU WEBHOOK: {"resource":"168123637509","topic":"payment"}
+2026-07-15 19:32:45 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.253 | IP Invasor: 10.50.0.254
+2026-07-15 19:33:01 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.253 | IP Invasor: 10.50.0.254
+2026-07-15 19:33:11 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168123825493"},"date_created":"2026-07-15T22:33:11Z","id":134919474998,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 19:33:11 - RECEBEU WEBHOOK: {"resource":"168123825493","topic":"payment"}
+2026-07-15 19:34:11 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.253 | IP Invasor: 10.50.0.254
+2026-07-15 19:35:10 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168123825685"},"date_created":"2026-07-15T22:35:10Z","id":134769888033,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 19:35:10 - RECEBEU WEBHOOK: {"resource":"168123825685","topic":"payment"}
+2026-07-15 19:36:39 - RECEBEU WEBHOOK: {"resource":"168123562053","topic":"payment"}
+2026-07-15 19:36:39 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168123562053"},"date_created":"2026-07-15T22:36:39Z","id":134919619390,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:02:51 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168124082547"},"date_created":"2026-07-15T22:26:09Z","id":134920939934,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:02:52 - RECEBEU WEBHOOK: {"resource":"168124082547","topic":"payment"}
+2026-07-15 20:05:54 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168123825493"},"date_created":"2026-07-15T22:33:11Z","id":134921107550,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:05:55 - RECEBEU WEBHOOK: {"resource":"168123825493","topic":"payment"}
+2026-07-15 20:06:10 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168123637509"},"date_created":"2026-07-15T22:31:20Z","id":134771354947,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:06:11 - RECEBEU WEBHOOK: {"resource":"168123637509","topic":"payment"}
+2026-07-15 20:06:14 - RECEBEU WEBHOOK: {"resource":"168123417557","topic":"payment"}
+2026-07-15 20:06:14 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168123417557"},"date_created":"2026-07-15T22:30:29Z","id":134771410153,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:12:24 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168123562053"},"date_created":"2026-07-15T22:36:39Z","id":134771668953,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:12:25 - RECEBEU WEBHOOK: {"resource":"168123562053","topic":"payment"}
+2026-07-15 20:12:49 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168123825685"},"date_created":"2026-07-15T22:35:10Z","id":134921490712,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:12:49 - RECEBEU WEBHOOK: {"resource":"168123825685","topic":"payment"}
+2026-07-15 20:26:48 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168999535462"},"date_created":"2026-07-15T23:26:47Z","id":134922087042,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:26:48 - RECEBEU WEBHOOK: {"resource":"168999535462","topic":"payment"}
+2026-07-15 20:27:16 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168999535462"},"date_created":"2026-07-15T23:26:47Z","id":134922165334,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 20:27:16 - RECEBEU WEBHOOK: {"resource":"168999535462","topic":"payment"}
+2026-07-15 20:27:17 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 20:27:17 - AVISO: Transação 168999535462 ignorada. Já processada anteriormente.
+2026-07-15 20:27:19 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 20:43:45 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 20:44:00 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 20:59:45 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 21:02:44 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 21:04:51 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 21:05:20 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 21:05:34 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 21:07:01 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169006291140"},"date_created":"2026-07-16T00:07:01Z","id":134774316209,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:07:01 - RECEBEU WEBHOOK: {"resource":"169006291140","topic":"payment"}
+2026-07-15 21:07:29 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169006291140"},"date_created":"2026-07-16T00:07:01Z","id":134924050000,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:07:29 - RECEBEU WEBHOOK: {"resource":"169006291140","topic":"payment"}
+2026-07-15 21:07:29 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 21:07:30 - AVISO: Transação 169006291140 ignorada. Já processada anteriormente.
+2026-07-15 21:07:31 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 21:08:02 - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: B6:57:3B:04:9A:D8 | IP Esperado: 10.50.0.254 | IP Invasor: 10.50.0.253
+2026-07-15 21:10:26 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:11:23 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:12:45 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:14:19 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:17:10 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:22:26 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:24:05 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:25:19 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:31:13 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:00 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:08 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:12 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:14 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:15 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:22 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:35:41 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168143560995"},"date_created":"2026-07-16T00:35:41Z","id":134925448392,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:35:41 - RECEBEU WEBHOOK: {"resource":"168143560995","topic":"payment"}
+2026-07-15 21:36:13 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168143560995"},"date_created":"2026-07-16T00:35:41Z","id":134925457142,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:36:13 - RECEBEU WEBHOOK: {"resource":"168143560995","topic":"payment"}
+2026-07-15 21:36:13 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 21:36:13 - AVISO: Transação 168143560995 ignorada. Já processada anteriormente.
+2026-07-15 21:36:16 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 21:36:21 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.253 | IP Atual: 66.249.85.12
+2026-07-15 21:36:22 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.253 | IP Atual: 74.125.210.198
+2026-07-15 21:36:22 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.253 | IP Atual: 74.125.210.198
+2026-07-15 21:47:02 - RECEBEU WEBHOOK: {"resource":"169013366372","topic":"payment"}
+2026-07-15 21:47:02 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169013366372"},"date_created":"2026-07-16T00:47:01Z","id":134776128629,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:47:16 - RECEBEU WEBHOOK: {"resource":"169013690130","topic":"payment"}
+2026-07-15 21:47:16 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169013690130"},"date_created":"2026-07-16T00:47:16Z","id":134776210089,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:49:58 - RECEBEU WEBHOOK: {"resource":"168146736535","topic":"payment"}
+2026-07-15 21:49:58 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168146736535"},"date_created":"2026-07-16T00:49:57Z","id":134926116284,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 21:52:08 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:52:16 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:52:25 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:52:27 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:52:29 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:52:30 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:55:49 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:55:53 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 21:58:35 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:01:44 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:03:13 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168147955045"},"date_created":"2026-07-16T01:03:13Z","id":134776898241,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:03:13 - RECEBEU WEBHOOK: {"resource":"168147955045","topic":"payment"}
+2026-07-15 22:04:19 - RECEBEU WEBHOOK: {"resource":"168148100973","topic":"payment"}
+2026-07-15 22:04:19 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168148100973"},"date_created":"2026-07-16T01:04:19Z","id":134926674916,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:05:21 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169015878326"},"date_created":"2026-07-16T01:05:20Z","id":134926750608,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:05:21 - RECEBEU WEBHOOK: {"resource":"169015878326","topic":"payment"}
+2026-07-15 22:05:40 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169015878326"},"date_created":"2026-07-16T01:05:20Z","id":134926795048,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:05:41 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 22:05:41 - RECEBEU WEBHOOK: {"resource":"169015878326","topic":"payment"}
+2026-07-15 22:05:41 - AVISO: Transação 169015878326 ignorada. Já processada anteriormente.
+2026-07-15 22:05:43 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 22:06:06 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:06:59 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:07:13 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:08:46 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:08:49 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:09:07 - ⚠️ IP DIFERENTE (possível NAT) | MAC: B6:57:3B:04:9A:D8 | IP Banco: 10.50.0.254 | IP Atual: 10.50.0.253
+2026-07-15 22:09:13 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169016354256"},"date_created":"2026-07-16T01:09:12Z","id":134777027797,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:09:13 - RECEBEU WEBHOOK: {"resource":"169016354256","topic":"payment"}
+2026-07-15 22:09:41 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169016354256"},"date_created":"2026-07-16T01:09:12Z","id":134926939716,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:09:41 - RECEBEU WEBHOOK: {"resource":"169016354256","topic":"payment"}
+2026-07-15 22:09:41 - Iniciando liberação para MAC: B6:57:3B:04:9A:D8 no roteador: fortaleza
+2026-07-15 22:09:42 - AVISO: Transação 169016354256 ignorada. Já processada anteriormente.
+2026-07-15 22:09:44 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-15 22:21:43 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169013690130"},"date_created":"2026-07-16T00:47:16Z","id":134927502548,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:21:43 - RECEBEU WEBHOOK: {"resource":"169013690130","topic":"payment"}
+2026-07-15 22:23:05 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169013366372"},"date_created":"2026-07-16T00:47:01Z","id":134777701849,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:23:05 - RECEBEU WEBHOOK: {"resource":"169013366372","topic":"payment"}
+2026-07-15 22:27:19 - RECEBEU WEBHOOK: {"resource":"168146736535","topic":"payment"}
+2026-07-15 22:27:19 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168146736535"},"date_created":"2026-07-16T00:49:57Z","id":134777946111,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:31:51 - ⚠️ IP DIFERENTE (possível NAT) | MAC: 3E:85:2C:FA:15:6D | IP Banco: 10.50.0.250 | IP Atual: 189.45.78.164
+2026-07-15 22:32:51 - ⚠️ IP DIFERENTE (possível NAT) | MAC: 3E:85:2C:FA:15:6D | IP Banco: 10.50.0.250 | IP Atual: 189.45.78.164
+2026-07-15 22:36:29 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168147955045"},"date_created":"2026-07-16T01:03:13Z","id":134928075522,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:36:29 - RECEBEU WEBHOOK: {"resource":"168147955045","topic":"payment"}
+2026-07-15 22:37:36 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168148100973"},"date_created":"2026-07-16T01:04:19Z","id":134778301763,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:37:37 - RECEBEU WEBHOOK: {"resource":"168148100973","topic":"payment"}
+2026-07-15 22:56:05 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169019867924"},"date_created":"2026-07-16T01:56:05Z","id":134778933969,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:56:05 - RECEBEU WEBHOOK: {"resource":"169019867924","topic":"payment"}
+2026-07-15 22:57:05 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169019867924"},"date_created":"2026-07-16T01:56:05Z","id":134779077811,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-15 22:57:05 - RECEBEU WEBHOOK: {"resource":"169019867924","topic":"payment"}
+2026-07-15 22:57:05 - Iniciando liberação para MAC: 3E:85:2C:FA:15:6D no roteador: fortaleza
+2026-07-15 22:57:05 - AVISO: Transação 169019867924 ignorada. Já processada anteriormente.
+2026-07-15 22:57:08 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).
+2026-07-16 15:42:04 - RECEBEU WEBHOOK: {"resource":"169118802556","topic":"payment"}
+2026-07-16 15:42:04 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169118802556"},"date_created":"2026-07-16T18:42:03Z","id":134958487438,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:46:13 - RECEBEU WEBHOOK: {"resource":"169118155326","topic":"payment"}
+2026-07-16 15:46:13 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169118155326"},"date_created":"2026-07-16T18:46:13Z","id":134808561317,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:49:36 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169118667200"},"date_created":"2026-07-16T18:49:35Z","id":134958922888,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:49:36 - RECEBEU WEBHOOK: {"resource":"169118667200","topic":"payment"}
+2026-07-16 15:51:52 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168251624565"},"date_created":"2026-07-16T18:51:52Z","id":134808789817,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:51:52 - RECEBEU WEBHOOK: {"resource":"168251624565","topic":"payment"}
+2026-07-16 15:55:37 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168252538319"},"date_created":"2026-07-16T18:55:36Z","id":134959288018,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:55:37 - RECEBEU WEBHOOK: {"resource":"168252538319","topic":"payment"}
+2026-07-16 15:58:00 - RECEBEU WEBHOOK: {"resource":"169118803846","topic":"payment"}
+2026-07-16 15:58:00 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169118803846"},"date_created":"2026-07-16T18:57:59Z","id":134809218229,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:59:27 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168252622627"},"date_created":"2026-07-16T18:59:27Z","id":134959420482,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 15:59:27 - RECEBEU WEBHOOK: {"resource":"168252622627","topic":"payment"}
+2026-07-16 16:16:40 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169118802556"},"date_created":"2026-07-16T18:42:03Z","id":134960266328,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:16:40 - RECEBEU WEBHOOK: {"resource":"169118802556","topic":"payment"}
+2026-07-16 16:19:25 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168253369829"},"date_created":"2026-07-16T19:19:24Z","id":134810214601,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:19:25 - RECEBEU WEBHOOK: {"resource":"168253369829","topic":"payment"}
+2026-07-16 16:22:11 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169118155326"},"date_created":"2026-07-16T18:46:13Z","id":134810307543,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:22:12 - RECEBEU WEBHOOK: {"resource":"169118155326","topic":"payment"}
+2026-07-16 16:25:58 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169118667200"},"date_created":"2026-07-16T18:49:35Z","id":134960730178,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:25:58 - RECEBEU WEBHOOK: {"resource":"169118667200","topic":"payment"}
+2026-07-16 16:26:54 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168251624565"},"date_created":"2026-07-16T18:51:52Z","id":134960730888,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:26:55 - RECEBEU WEBHOOK: {"resource":"168251624565","topic":"payment"}
+2026-07-16 16:30:09 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168252538319"},"date_created":"2026-07-16T18:55:36Z","id":134810742555,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:30:09 - RECEBEU WEBHOOK: {"resource":"168252538319","topic":"payment"}
+2026-07-16 16:30:19 - RECEBEU WEBHOOK: {"resource":"168252622627","topic":"payment"}
+2026-07-16 16:30:20 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168252622627"},"date_created":"2026-07-16T18:59:27Z","id":134960900492,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:30:21 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169118803846"},"date_created":"2026-07-16T18:57:59Z","id":134960861592,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:30:21 - RECEBEU WEBHOOK: {"resource":"169118803846","topic":"payment"}
+2026-07-16 16:57:38 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168253369829"},"date_created":"2026-07-16T19:19:24Z","id":134812100037,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 16:57:38 - RECEBEU WEBHOOK: {"resource":"168253369829","topic":"payment"}
+2026-07-16 17:23:37 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169135378118"},"date_created":"2026-07-16T20:23:36Z","id":134813388437,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 17:23:37 - RECEBEU WEBHOOK: {"resource":"169135378118","topic":"payment"}
+2026-07-16 17:32:28 - RECEBEU WEBHOOK: {"resource":"168266629089","topic":"payment"}
+2026-07-16 17:32:28 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"168266629089"},"date_created":"2026-07-16T20:32:27Z","id":134963952754,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 17:35:33 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8080 after 199 ms: Couldn't connect to server | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-16 17:35:47 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8081 after 1030 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:8081/rest/ip/hotspot/active
+2026-07-16 17:35:52 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8081 after 1025 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:8081/rest/ip/hotspot/active
+2026-07-16 17:36:02 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8081 after 1020 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:8081/rest/ip/hotspot/active
+2026-07-16 17:36:35 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8081 after 1030 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:8081/rest/ip/hotspot/active
+2026-07-16 17:36:36 - FALHA CRÍTICA DE REDE: Failed to connect to api.deboananet.club port 4433 after 1022 ms: Couldn't connect to server | Tentando acessar: http://api.deboananet.club:4433/rest/ip/hotspot/active
+2026-07-16 17:36:51 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8081 after 1016 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:8081/rest/ip/hotspot/active
+2026-07-16 17:36:52 - FALHA CRÍTICA DE REDE: Failed to connect to api.deboananet.club port 4433 after 1086 ms: Couldn't connect to server | Tentando acessar: http://api.deboananet.club:4433/rest/ip/hotspot/active
+2026-07-16 17:38:38 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 4433 after 1028 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:4433/rest/ip/hotspot/active
+2026-07-16 17:39:34 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 4433 after 1018 ms: Couldn't connect to server | Tentando acessar: http://189.45.78.164:4433/rest/ip/hotspot/active
+2026-07-16 17:39:53 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-16 17:40:20 - FALHA CRÍTICA DE REDE: Connection timed out after 5001 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-16 17:40:29 - FALHA CRÍTICA DE REDE: Connection timed out after 5000 milliseconds | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-16 17:44:34 - FALHA CRÍTICA DE REDE: Failed to connect to 189.45.78.164 port 8080 after 199 ms: Couldn't connect to server | Tentando acessar: https://189.45.78.164:8080/rest/ip/hotspot/active
+2026-07-16 17:57:57 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169135378118"},"date_created":"2026-07-16T20:23:36Z","id":134965304894,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 17:57:57 - RECEBEU WEBHOOK: {"resource":"169135378118","topic":"payment"}
+2026-07-16 18:08:41 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"168266629089"},"date_created":"2026-07-16T20:32:27Z","id":134965799626,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 18:08:41 - RECEBEU WEBHOOK: {"resource":"168266629089","topic":"payment"}
+2026-07-16 19:11:26 - RECEBEU WEBHOOK: {"action":"payment.created","api_version":"v1","data":{"id":"169153259324"},"date_created":"2026-07-16T22:11:25Z","id":134818966265,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 19:11:26 - RECEBEU WEBHOOK: {"resource":"169153259324","topic":"payment"}
+2026-07-16 19:11:40 - RECEBEU WEBHOOK: {"action":"payment.updated","api_version":"v1","data":{"id":"169153259324"},"date_created":"2026-07-16T22:11:25Z","id":134969138956,"live_mode":true,"type":"payment","user_id":"101398970"}
+2026-07-16 19:11:40 - RECEBEU WEBHOOK: {"resource":"169153259324","topic":"payment"}
+2026-07-16 19:11:40 - Iniciando liberação para MAC: 7E:72:9F:93:97:E6 no roteador: fortaleza
+2026-07-16 19:11:40 - AVISO: Transação 169153259324 ignorada. Já processada anteriormente.
+2026-07-16 19:11:44 - SUCESSO: Tempo acumulado/liberado no Roteador (fortaleza).

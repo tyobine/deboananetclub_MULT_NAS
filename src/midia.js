@@ -157,9 +157,9 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.sucesso === true) {
-                        // SUCESSO CONFIRMADO: Criação de form POST invisível para auto-login
+                        // SUCESSO CONFIRMADO: Criação de form POST invisível para auto-login no MikroTik
                         var macCli = encodeURIComponent(data.mac);
-                        var urlSucesso = window.location.origin + '/sucesso?mac=' + macCli;
+                        var urlInicio = window.location.origin + '/inicio?mac=' + macCli;
 
                         var formLogin = document.createElement('form');
                         formLogin.method = 'POST';
@@ -179,7 +179,7 @@
                         var inputDst = document.createElement('input');
                         inputDst.type = 'hidden';
                         inputDst.name = 'dst';
-                        inputDst.value = urlSucesso;
+                        inputDst.value = urlInicio;
 
                         formLogin.appendChild(inputUser);
                         formLogin.appendChild(inputPass);

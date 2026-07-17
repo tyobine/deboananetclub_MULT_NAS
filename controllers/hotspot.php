@@ -13,56 +13,62 @@ class Hotspot
     public function index()
     {
         $db = new Banco();
-
-        $mac_url = strtoupper(urldecode($_GET['mac'] ?? ''));
-        $ip_url = $_GET['ip'] ?? '';
-
-        // CAPTURA MULTI-NAS ROUTER ID
         $modeloRoteador = new Roteador();
         $padraoRoteador = $modeloRoteador->obterPadrao();
+
+        $limpar_url = false;
         
-        $router_url = strtolower(trim($_GET['router'] ?? ''));
-        if (!empty($router_url) && $modeloRoteador->obterPorIdentificador($router_url)) {
-            setcookie('router_id', $router_url, time() + (86400 * 30), "/");
-            $router_id = $router_url;
+        // 1. INTERCEPTAÇÃO INTELIGENTE (Sem redirecionamento PHP para evitar bloqueio do Chrome)
+        if (isset($_GET['mac']) || isset($_GET['ip']) || isset($_GET['router'])) {
+            
+            $mac = strtoupper(urldecode($_GET['mac'] ?? ''));
+            $ip = $_GET['ip'] ?? '';
+            $router_id = strtolower(trim($_GET['router'] ?? ''));
+
+            if (!empty($mac)) setcookie('mac_cliente', $mac, time() + (86400 * 30), "/");
+            if (!empty($ip)) setcookie('ip_cliente', $ip, time() + (86400 * 30), "/");
+            
+            if (!empty($router_id) && $modeloRoteador->obterPorIdentificador($router_id)) {
+                setcookie('router_id', $router_id, time() + (86400 * 30), "/");
+            } else {
+                $router_id = $padraoRoteador['nome_identificador'] ?? '';
+            }
+
+            // Avisa a View (HTML) para limpar a barra de endereços via JavaScript
+            $limpar_url = true;
+
         } else {
+            // 2. RECUPERAÇÃO SEGURA DOS COOKIES (Se a URL já veio limpa)
+            $mac = $_COOKIE['mac_cliente'] ?? '';
+            $ip = $_COOKIE['ip_cliente'] ?? '';
             $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
         }
 
-        // CORREÇÃO TÉCNICA: Persistência do IP Local por Cookie (Evita quebra do Anti-Spoofing)
-        $ip = '';
-        if (!empty($ip_url)) {
-            setcookie('ip_cliente', $ip_url, time() + (86400 * 30), "/");
-            $ip = $ip_url;
-        } elseif (!empty($_COOKIE['ip_cliente'])) {
-            $ip = $_COOKIE['ip_cliente'];
-        } else {
-            $ip = Rede::obterIpCliente();
-        }
-
-        $mac = '';
-        // Prioridade 1: Veio direto do roteador agora (URL)
-        if (!empty($mac_url)) {
-            setcookie('mac_cliente', $mac_url, time() + (86400 * 30), "/");
-            $mac = $mac_url;
-        }
-        // Prioridade 2: Cookie ou Banco de Dados
-        elseif (!empty($_COOKIE['mac_cliente'])) {
-            $mac = $_COOKIE['mac_cliente'];
-        } else {
-            $ultimoAcesso = $db->getRow("SELECT mac_address FROM acessos_pix WHERE ip_address = ? ORDER BY id DESC LIMIT 1", [$ip]);
-            if ($ultimoAcesso) {
-                $mac = $ultimoAcesso['mac_address'];
-                setcookie('mac_cliente', $mac, time() + (86400 * 30), "/");
+        // 3. TRAVA DE SEGURANÇA BLINDADA: IMPEDIR COMPRA PELO 4G EXTERNO
+        $ip_cliente_real = Rede::obterIpCliente();
+        
+        // Checa se é IP de rede local (RFC 1918)
+        $is_local_ip = preg_match('/^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/', $ip_cliente_real);
+        
+        // Checa se o IP do cliente é o mesmo IP Público do MikroTik (caso de portal hospedado na nuvem/NAT)
+        $is_router_ip = false;
+        // CORRIGIDO: Retornando para a tabela correta do seu banco de dados
+        $roteadores = $db->getAll("SELECT host FROM crm_roteadores"); 
+        foreach ($roteadores as $rot) {
+            $rot_ip = gethostbyname($rot['host']);
+            if ($ip_cliente_real === $rot_ip) {
+                $is_router_ip = true;
+                break;
             }
         }
 
-        // TRAVA DE SEGURANÇA: IMPEDIR COMPRA PELO 4G (Aceitando rede local)
-        if (empty($mac_url) && !preg_match('/^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/', $ip)) {
+        // Se o IP não for local e não for do router, bloqueia.
+        if (!$is_local_ip && !$is_router_ip) {
             require_once __DIR__ . '/../views/institucional.php';
             exit;
         }
 
+        // SE O PHP NÃO SABE O MAC, ELE DEVOLVE PARA O MIKROTIK FORÇAR O ENVIO DOS DADOS
         if (empty($mac)) {
             $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
             $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
@@ -70,8 +76,9 @@ class Hotspot
             exit;
         }
 
+        // 4. LÓGICA DE SESSÃO ATIVA (Cronômetro na tela)
+        $sessaoAtiva = null;
         if (!empty($mac)) {
-            // Busca a sessão ativa do usuário (Gratuita ou Paga)
             $acesso = $db->getRow("
                 SELECT a.id, a.expira_em, a.ip_address, p.name as plano_nome 
                 FROM acessos_pix a
@@ -85,32 +92,26 @@ class Hotspot
                 $agora = time();
                 $expiracao = strtotime($acesso['expira_em']);
 
-                if ($acesso['ip_address'] !== $ip) {
-                    $log = date('Y-m-d H:i:s') . " - 🚨 TENTATIVA DE SPOOFING BLOQUEADA | MAC: $mac | IP Esperado: {$acesso['ip_address']} | IP Invasor: $ip\n";
-                    file_put_contents(__DIR__ . '/../webhook_log.txt', $log, FILE_APPEND);
-                }
-                // UX: Se o usuário caiu do Wi-Fi e o tempo (ex: 10 min) ainda não acabou, reconecta ele sem mostrar planos
-                elseif ($expiracao > $agora) {
+                if ($expiracao > $agora) {
+                    $tempoRestante = $expiracao - $agora;
+                    $sessaoAtiva = $acesso;
+
                     $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
                     $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
-                    $urlSucesso = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso?mac=" . urlencode($mac);
-                    
-                    echo "<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Reconectando...</title></head>
-                    <body style='background:#f8f9fa;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;margin:0;'>
-                    <div style='text-align:center; padding: 20px;'>
-                        <div style='width: 3rem; height: 3rem; border: 4px solid #0d6efd; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem auto;'></div>
-                        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
-                        <h2 style='color:#333; margin-bottom: 10px;'>Reconectando...</h2>
-                        <p style='color:#666;'>Você possui um plano ativo. Liberando o acesso...</p>
-                    </div>
-                    <form id='autoLoginForm' method='POST' action='http://{$mikrotikGateway}/login' style='display:none;'>
-                        <input type='hidden' name='username' value='{$mac}'>
-                        <input type='hidden' name='password' value='{$mac}'>
-                        <input type='hidden' name='dst' value='{$urlSucesso}'>
-                    </form>
-                    <script>setTimeout(function(){ document.getElementById('autoLoginForm').submit(); }, 1500);</script>
-                    </body></html>";
-                    exit;
+
+                    $configAd = $db->getRow("SELECT valor FROM configuracoes WHERE chave = 'exibir_ad_pos_pago'");
+                    $exibir_ad_pos_pago = $configAd ? $configAd['valor'] : 'passivo';
+
+                    $anuncioPosPago = null;
+                    if ($exibir_ad_pos_pago === 'passivo') {
+                        $anuncios = $db->getAll("SELECT id, tipo, caminho_arquivo, link_destino FROM crm_anuncios WHERE exibir = 'sim' AND (FIND_IN_SET(?, localizacao) > 0 OR localizacao = 'todos')", [$router_id]);
+                        if (empty($anuncios)) {
+                            $anuncios = $db->getAll("SELECT id, tipo, caminho_arquivo, link_destino FROM crm_anuncios WHERE exibir = 'sim'");
+                        }
+                        if (!empty($anuncios)) {
+                            $anuncioPosPago = $anuncios[array_rand($anuncios)];
+                        }
+                    }
                 }
                 else {
                     $db->query("UPDATE acessos_pix SET status = 'expirado' WHERE id = ?", [$acesso['id']]);
@@ -128,26 +129,19 @@ class Hotspot
         $db = new Banco();
 
         $plano_id = $_REQUEST['plan_id'] ?? null;
-        $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
-        $ip = $_REQUEST['ip'] ?? '';
-
+        
         $modeloRoteador = new Roteador();
         $padraoRoteador = $modeloRoteador->obterPadrao();
         $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
 
-        if (empty($ip)) {
-            $ip = $_COOKIE['ip_cliente'] ?? Rede::obterIpCliente();
-        }
-
+        $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
         if (empty($mac)) {
             $mac = $_COOKIE['mac_cliente'] ?? '';
         }
 
-        if (empty($mac)) {
-            $ultimoAcesso = $db->getRow("SELECT mac_address FROM acessos_pix WHERE ip_address = ? ORDER BY id DESC LIMIT 1", [$ip]);
-            if ($ultimoAcesso) {
-                $mac = $ultimoAcesso['mac_address'];
-            }
+        $ip = $_REQUEST['ip'] ?? '';
+        if (empty($ip)) {
+            $ip = $_COOKIE['ip_cliente'] ?? '';
         }
 
         if (empty($mac)) {
@@ -169,7 +163,6 @@ class Hotspot
             exit;
         }
 
-        // Lógica de Plano Grátis
         if (intval($plano['price_cents']) === 0) {
             $ultimoGratis = $db->getRow("
                 SELECT expira_em FROM acessos_pix 
@@ -180,15 +173,12 @@ class Hotspot
             if ($ultimoGratis && !empty($ultimoGratis['expira_em'])) {
                 date_default_timezone_set('America/Fortaleza');
                 $agora = time();
-                
-                // O momento exato em que os 10 minutos (duration_minutes) terminam
                 $expiracao = strtotime($ultimoGratis['expira_em']);
 
-                // CENÁRIO 1: O PLANO AINDA ESTÁ ATIVO (O cliente voltou antes do tempo acabar)
                 if ($agora < $expiracao) {
                     $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
                     $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
-                    $urlSucesso = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso?mac=" . urlencode($mac);
+                    $urlSucesso = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso";
                     
                     echo "<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Reconectando...</title></head>
                     <body style='background:#f8f9fa;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;margin:0;'>
@@ -208,14 +198,10 @@ class Hotspot
                     exit;
                 }
 
-                // CENÁRIO 2: O TEMPO DE USO ACABOU. INICIA A CARÊNCIA.
                 $carencia_bd = $db->getRow("SELECT valor FROM configuracoes WHERE chave = 'tempo_carencia'");
                 $minutos_carencia = $carencia_bd ? intval($carencia_bd['valor']) : 15;
-                
-                // A carência (ex: 15min) é somada em cima do momento que o plano expirou
                 $hora_liberacao_nova = $expiracao + ($minutos_carencia * 60);
 
-                // Se ainda está na janela de bloqueio
                 if ($agora < $hora_liberacao_nova) {
                     $min_restantes = ceil(($hora_liberacao_nova - $agora) / 60);
                     require_once __DIR__ . '/../views/limite.php';
@@ -223,12 +209,10 @@ class Hotspot
                 }
             }
 
-            // A carência acabou ou o usuário nunca usou plano grátis
             require_once __DIR__ . '/../views/publicidade.php';
             exit;
         }
 
-        // Lógica de Plano Pago (PIX) - Não tem bloqueio de carência, é imediato.
         $mp = new MercadoPago();
         $dadosPix = $mp->criarPix($plano['price_cents'], $mac, $ip, $plano_id, $plano['name'], $router_id);
 
@@ -256,16 +240,22 @@ class Hotspot
         header('Content-Type: application/json');
 
         $plano_id = $_REQUEST['plan_id'] ?? null;
-        $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
-        $ip = $_REQUEST['ip'] ?? '';
-        
-        // Coleta de dados adicionais do fluxo de anúncios retidos
         $anuncio_id_clicado = isset($_REQUEST['anuncio_id_clicado']) ? (int)$_REQUEST['anuncio_id_clicado'] : 0;
         $url_redirecionamento_final = $_REQUEST['url_redirecionamento_final'] ?? '';
 
         $modeloRoteador = new Roteador();
         $padraoRoteador = $modeloRoteador->obterPadrao();
         $router_id = $_COOKIE['router_id'] ?? ($padraoRoteador['nome_identificador'] ?? '');
+
+        $mac = strtoupper(urldecode($_REQUEST['mac'] ?? ''));
+        if (empty($mac)) {
+            $mac = $_COOKIE['mac_cliente'] ?? '';
+        }
+
+        $ip = $_REQUEST['ip'] ?? '';
+        if (empty($ip)) {
+            $ip = $_COOKIE['ip_cliente'] ?? '';
+        }
 
         $whatsapp_raw = $_REQUEST['whatsapp'] ?? '';
         $whatsapp_numero = preg_replace('/[^0-9]/', '', $whatsapp_raw);
@@ -274,12 +264,8 @@ class Hotspot
         }
 
         if (!$plano_id || empty($mac)) {
-            echo json_encode(['sucesso' => false, 'mensagem' => 'Dados inválidos ou incompletos.']);
+            echo json_encode(['sucesso' => false, 'mensagem' => 'Dados inválidos ou incompletos. Acesso negado.']);
             exit;
-        }
-
-        if (empty($ip)) {
-            $ip = $_COOKIE['ip_cliente'] ?? Rede::obterIpCliente();
         }
 
         $db = new Banco();
@@ -290,7 +276,6 @@ class Hotspot
             exit;
         }
 
-        // SEGURANÇA DA API: Validação rigorosa na linha de chegada
         $ultimoGratis = $db->getRow("
             SELECT expira_em, status FROM acessos_pix 
             WHERE mac_address = ? AND plano_id = ? 
@@ -302,18 +287,15 @@ class Hotspot
             $agora = time();
             $expiracao = strtotime($ultimoGratis['expira_em']);
 
-            // Tentou enviar o comando de liberação mesmo com o plano em uso?
             if ($agora < $expiracao && $ultimoGratis['status'] === 'ativo') {
                 echo json_encode(['sucesso' => false, 'mensagem' => 'Você já possui um plano em uso no momento.']);
                 exit;
             }
 
-            // O tempo de uso expirou, valida a carência dinamicamente
             $carencia_bd = $db->getRow("SELECT valor FROM configuracoes WHERE chave = 'tempo_carencia'");
             $minutos_carencia = $carencia_bd ? intval($carencia_bd['valor']) : 15;
             $hora_liberacao_nova = $expiracao + ($minutos_carencia * 60);
 
-            // Tentou burlar a tela e disparar a API durante a carência?
             if ($agora < $hora_liberacao_nova) {
                 $min_restantes = ceil(($hora_liberacao_nova - $agora) / 60);
                 echo json_encode(['sucesso' => false, 'mensagem' => "Acesso negado. Aguarde {$min_restantes} minutos de carência."]);
@@ -324,7 +306,6 @@ class Hotspot
         $txid_gratis = "PUB-" . time() . "-" . rand(1000, 9999);
         date_default_timezone_set('America/Fortaleza');
         
-        // Define dinamicamente o tempo que o cliente vai usar, baseado no plano criado.
         $minutos_do_plano = intval($plano['duration_minutes']);
         $expiracao_calculada = date('Y-m-d H:i:s', strtotime("+{$minutos_do_plano} minutes"));
 
@@ -333,14 +314,10 @@ class Hotspot
             VALUES (?, 'processando', ?, ?, ?, ?, ?, ?)
         ", [$txid_gratis, $ip, $mac, $whatsapp_numero, $plano_id, $expiracao_calculada, $router_id]);
 
-        // CASO O USUÁRIO TENHA CLICADO NO ANÚNCIO: Computa a métrica no banco antes de liberar a rede
         if ($anuncio_id_clicado > 0 && !empty($url_redirecionamento_final)) {
             try {
-                $db->query("INSERT INTO cliques_anuncio (mac_address, url_destino, data_clique) VALUES (?, ?, NOW())", [$mac, $url_redirecionamento_final]);
-                $db->query("UPDATE crm_anuncios SET cliques = cliques + 1 WHERE id = ?", [$anuncio_id_clicado]);
-            } catch (\Throwable $th) {
-                // Silencia falhas de log de clique para priorizar a UX de conexão
-            }
+                $db->query("INSERT INTO crm_cliques (anuncio_id, data_registro) VALUES (?, NOW())", [$anuncio_id_clicado]);
+            } catch (\Throwable $th) {}
         }
 
         try {
@@ -353,9 +330,8 @@ class Hotspot
                 $rotInfo = $modeloRoteador->obterPorIdentificador($router_id) ?: $padraoRoteador;
                 $mikrotikGateway = $rotInfo['hotspot_ip'] ?? '10.50.0.1';
 
-                // Fallback de destino de navegação se não houver clique retido no anúncio
                 if (empty($url_redirecionamento_final)) {
-                    $url_redirecionamento_final = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso?mac=" . urlencode($mac);
+                    $url_redirecionamento_final = "http://" . $_SERVER['HTTP_HOST'] . "/sucesso";
                 }
 
                 echo json_encode([
@@ -363,7 +339,7 @@ class Hotspot
                     'mensagem' => 'Acesso libertado!',
                     'mac' => $mac,
                     'hotspot_ip' => $mikrotikGateway,
-                    'redirecionar_para' => $url_redirecionamento_final // Repassa a URL final desejada ao JS do Front
+                    'redirecionar_para' => $url_redirecionamento_final
                 ]);
                 exit;
             } else {
